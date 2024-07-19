@@ -1,0 +1,90 @@
+name: Bump version on PR
+
+on:
+  # push:
+  #   branches:
+  #     - "*"
+  pull_request:
+    types: [opened, synchronize]
+    branches:
+      -  "*"
+
+
+jobs:
+  update-version:
+    
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print actor of the event and of cloned pull request
+        run: | 
+          echo ${{ github.actor }}
+          echo ${{ github.event.pull_request.user.login }}
+        shell: bash
+      
+      - name: print hello if actor is not jarvis
+        run: echo "Hello"
+        shell: bash
+
+      # - name: Checkout code
+      #   uses: actions/checkout@v2
+
+      # - name: Update version
+      #   id: update_monorepo_version
+      #   run: |
+      #     # Navigate to the scripts directory
+      #     cd ./internals/scripts
+          
+      #     ## get the current version
+      #     current_version=$(cat ../../apps/VERSION)
+
+      #     ## print the current version
+      #     echo "Current version: $current_version"
+          
+      #     # Run the shell script and capture its output
+      #     new_version=$(python bump_version.py $current_version)
+          
+      #     # Print the captured output for verification
+      #     echo "Shell script output: $new_version"
+
+      #     ## print the new version
+      #     echo "$new_version" > ../../apps/VERSION
+          
+      #   shell: bash
+      
+      # - name: Set environment variable
+      #   env:
+      #     NEW_VERSION: ${{ steps.update_monorepo_version.outputs.new_version }}
+      #   id: set_env_variable
+      #   shell: bash
+      #   run: |
+      #     # Navigate to the apps directory
+      #     cd ./apps
+
+      #     # Assign file content to an environment variable
+      #     export NEW_VERSION=$(cat VERSION)
+
+      #     # Display the environment variable
+      #     echo "New version from environment variable: $NEW_VERSION"
+
+      #     # Set the environment variable for the next steps GITHUB
+      #     echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
+
+      # - name: Print new version
+      #   run: |
+      #     echo "New version: $NEW_VERSION"
+      #   shell: bash
+
+      # - name: Create Pull Request
+      #   uses: peter-evans/create-pull-request@v6
+      #   with:
+      #       token: ${{ secrets.JARVIS_TOKEN }}
+      #       reviewers: ${{ github.actor }}
+      #       body: |
+      #         This PR updates the version file to ${{ env.NEW_VERSION }}.
+      #       commit-message: Update version file through script
+      #       title: 'Bump version to ${{ env.NEW_VERSION }}'
+      #       delete-branch: true
+      #       labels: version
+      #       branch: version-${{ env.NEW_VERSION}}
+      #       base: main
+            
