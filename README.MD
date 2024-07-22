@@ -1,1 +1,1 @@
-TEST 3
+VERSION 3

@@ -1,0 +1,15 @@
+name: Run on PR merged to main
+
+on:
+  workflow_run:
+    workflows: ["Bump version on PR"]
+    types:
+      - completed
+
+jobs:
+    run_on_pr_merged_to_main:
+        runs-on: ubuntu-latest
+        steps:
+        - name: Print hello
+          run: | 
+            echo "Hello from after bump version on PR"
