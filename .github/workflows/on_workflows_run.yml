@@ -1,0 +1,41 @@
+name: Multi Jobs Action
+
+on:
+    workflow_run:
+      workflows: ["Run on PR merged to main"]
+      types:
+          - completed
+    workflow_dispatch:
+        inputs:
+            flavor:
+                type: choice
+                description: 'Name of the environment to deploy to'
+                options: ['qa', 'prod', 'staging', 'dev']
+                required: true
+                default: 'qa'
+            platform:
+                type: choice
+                description: 'Platform'
+                options: ['ios', 'android', 'both']
+                required: true
+                default: 'both'
+
+jobs:
+
+  set_up_version:
+    runs-on: ubuntu-latest
+    permissions: write-all
+    steps:
+      - name: print NAME JOB
+        run: | 
+            echo "Job name: ${{ github.job }}"
+
+  build_android:
+    name: Build ubiDOCS Android | ${{ inputs.flavor }}
+    if: ${{ inputs.platform == 'android' || inputs.platform == 'both' }}
+    runs-on: ubuntu-latest
+    needs: set_up_version
+    steps:
+      - name: Print name JOB
+        run: | 
+            echo "Job name: ${{ github.job }}"
