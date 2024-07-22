@@ -1,13 +1,10 @@
 name: Multi Jobs Action
 
 on:
-    push:
-        branches:
-            - main
-    workflow_run:
-      workflows: ["Run on PR merged to main"]
-      types:
-          - completed
+#     workflow_run:
+#       workflows: ["Run on PR merged to main"]
+#       types:
+#           - completed
     workflow_dispatch:
         inputs:
             flavor:

@@ -1,6 +1,9 @@
 name: Run on PR merged to main
 
 on:
+  push:
+    branches:
+      - main
   workflow_run:
     workflows: ["Bump version on PR"]
     types:
@@ -13,3 +16,7 @@ jobs:
         - name: Print hello
           run: | 
             echo "Hello from after bump version on PR"
+        - name: Call Multi Jobs Action
+          uses: ./.github/workflows/multi-jobs-action
+
+    
