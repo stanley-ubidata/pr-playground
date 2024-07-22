@@ -16,7 +16,9 @@ jobs:
         - name: Print hello
           run: | 
             echo "Hello from after bump version on PR"
-        - name: Call Multi Jobs Action
-          uses: ./.github/workflows/multi-jobs-action
+    # Call Multi Jobs Action
+    # uses: ./.github/workflows/multi-jobs-action
+    multi_jobs_action:
+      uses: ./.github/workflows/on_workflows_run.yml
 
     
