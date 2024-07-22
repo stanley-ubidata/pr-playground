@@ -19,6 +19,7 @@ jobs:
     # Call Multi Jobs Action
     # uses: ./.github/workflows/multi-jobs-action
     multi_jobs_action:
+      needs: run_on_pr_merged_to_main
       uses: ./.github/workflows/on_workflows_run.yml
       with:
         flavor: 'qa'
