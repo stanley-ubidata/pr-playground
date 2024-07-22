@@ -1,6 +1,9 @@
 name: Multi Jobs Action
 
 on:
+    push:
+        branches:
+            - main
     workflow_run:
       workflows: ["Run on PR merged to main"]
       types:
@@ -29,6 +32,10 @@ jobs:
       - name: print NAME JOB
         run: | 
             echo "Job name: ${{ github.job }}"
+      - name: Print inputs
+        run: | 
+            echo "Flavor: ${{ inputs.flavor }}"
+            echo "Platform: ${{ inputs.platform }}"
 
   build_android:
     name: Build ubiDOCS Android | ${{ inputs.flavor }}
