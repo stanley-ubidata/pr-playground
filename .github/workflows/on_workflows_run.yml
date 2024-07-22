@@ -1,6 +1,14 @@
 name: Multi Jobs Action
 
 on:
+    workflow_call:
+        inputs:
+            flavor:
+                type: string
+                default: 'qa'
+            platform:
+                type: string
+                default: 'both'
 #     workflow_run:
 #       workflows: ["Run on PR merged to main"]
 #       types:
