@@ -20,5 +20,8 @@ jobs:
     # uses: ./.github/workflows/multi-jobs-action
     multi_jobs_action:
       uses: ./.github/workflows/on_workflows_run.yml
+      with:
+        flavor: 'qa'
+        platform: 'both'
 
     
