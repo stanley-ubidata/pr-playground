@@ -21,6 +21,7 @@ jobs:
     multi_jobs_action:
       needs: run_on_pr_merged_to_main
       uses: ./.github/workflows/on_workflows_run.yml
+      permissions: write-all
       with:
         flavor: 'qa'
         platform: 'both'
