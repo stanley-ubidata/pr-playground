@@ -4,7 +4,7 @@ on:
   push:
     branches-ignore: 
       - 'main'     
-      - 'versionaaa*' 
+      - 'version*' 
   workflow_dispatch:
 
 jobs:
