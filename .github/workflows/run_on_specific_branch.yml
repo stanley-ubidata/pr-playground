@@ -2,9 +2,9 @@ name: Run on specific branch
 
 on:
   push:
-    branches:
-      - '!main'     # This excludes the main branch
-      - '!version*' # This excludes branches starting with "version"
+    branches-ignore: 
+      - 'main'     # This excludes the main branch
+      - 'version*' # This excludes branches starting with "version"
   workflow_dispatch:
 
 jobs:
