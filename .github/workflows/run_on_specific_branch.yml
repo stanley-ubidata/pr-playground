@@ -13,4 +13,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Run tests
-        run: echo "Running tests..."  # Replace with your actual test command
+        run: echo "Running tests..." 
+      - name: Print branch name
+        run: |
+         echo "Branch name: ${{ github.ref }}"
