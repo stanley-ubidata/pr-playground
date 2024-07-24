@@ -6,7 +6,7 @@ on:
     branches:
       - main
     paths: 
-      - 'version/**'
+      - 'version*'
         
 jobs:
   create_tag:
