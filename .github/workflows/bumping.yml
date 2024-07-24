@@ -21,4 +21,3 @@ jobs:
       - name: print hello if actor is not jarvis
         run: echo "Hello"
         shell: bash
-            

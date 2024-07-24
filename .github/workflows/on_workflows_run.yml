@@ -9,10 +9,6 @@ on:
             platform:
                 type: string
                 default: 'both'
-#     workflow_run:
-#       workflows: ["Run on PR merged to main"]
-#       types:
-#           - completed
     workflow_dispatch:
         inputs:
             flavor:
