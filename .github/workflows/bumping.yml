@@ -4,8 +4,8 @@ on:
   pull_request:
     types: [closed]
     branches:
-      -  "main"
-
+      - 'main'
+  workflow_dispatch:
 
 jobs:
   update-version:
@@ -21,4 +21,3 @@ jobs:
       - name: print hello if actor is not jarvis
         run: echo "Hello"
         shell: bash
-
