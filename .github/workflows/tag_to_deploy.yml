@@ -9,12 +9,19 @@ on:
       - 'version/**'
         
 jobs:
-  create_tag:
+  create_tag_if_label_version:
     if: ${{ github.event.pull_request.merged == true && contains(github.event.pull_request.labels.*.name, 'version') }}
     runs-on: ubuntu-latest
     steps:
       - name: Create tag mock
         run: echo "Creating tag v${{ env.NEW_VERSION }}"   
+  
+  create_tag_if_branch_starts_with_version:
+    if: ${{ github.event.pull_request.merged == true && startsWith(github.event.pull_request.head.ref, 'version') }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create tag mock
+        run: echo "Creating tag v${{ env.NEW_VERSION }}"
 
       
   deploy_to_qa:
