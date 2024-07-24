@@ -1,0 +1,23 @@
+name: Tag and Deploy to QA
+
+on:
+  pull_request:
+    types: [closed]
+    branches:
+      - main
+        
+jobs:
+  create_tag:
+    if: ${{ github.event.pull_request.merged == true && contains(github.event.pull_request.labels.*.name, 'version') }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create tag mock
+        run: echo "Creating tag v${{ env.NEW_VERSION }}"   
+
+      
+  deploy_to_qa:
+    if: ${{ github.event.pull_request.merged == true && contains(github.event.pull_request.labels.*.name, 'version') }}
+    uses: ./.github/workflows/deploy.yml
+    secrets: inherit
+    permissions: write-all
+        
