@@ -5,7 +5,7 @@ on:
     types: [closed]
     branches:
       - main
-        
+
 jobs:
   create_tag_if_label_version:
     if: ${{ github.event.pull_request.merged == true && contains(github.event.pull_request.labels.*.name, 'version') }}
@@ -23,7 +23,7 @@ jobs:
 
       
   deploy_to_qa:
-    if: ${{ github.event.pull_request.merged == true && contains(github.event.pull_request.labels.*.name, 'version') }}
+    if: ${{ github.event.pull_request.merged == true && contains(github.event.pull_request.head.ref, 'version') }}
     uses: ./.github/workflows/deploy.yml
     secrets: inherit
     permissions: write-all
