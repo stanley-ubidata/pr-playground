@@ -30,7 +30,7 @@ jobs:
           if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
             # if version is empty or dash AND envrionement is QA
             if [ "${{ github.event.inputs.enviroment }}" == "QA" ] && [ "${{ github.event.inputs.min_version }}" == "-" ]; then
-              echo "Version is required for QA"
+              echo "Version is required for QA environment"
               exit 1
             fi
           fi
