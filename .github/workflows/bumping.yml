@@ -1,10 +1,7 @@
 name: Bump version on PR
 
 on:
-  # on every PR merged that is not a bot PR
   pull_request:
-    branches-ignore:
-      - "Bump version to"
     types: [closed]
     branches:
       - "main"
