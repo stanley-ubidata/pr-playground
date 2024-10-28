@@ -4,20 +4,38 @@ on:
   pull_request:
     types: [closed]
     branches:
-      - 'main'
-    
+      - "main"
+
   workflow_dispatch:
+    inputs:
+      enviroment:
+        type: environment
+        default: DEV
+        required: true
+      version:
+        type: number
+        required: false
 
 jobs:
   update-version:
     runs-on: ubuntu-latest
     steps:
+      - name: Check if version is required based on environment value
+        run: |
+          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+            if [ "${{ github.event.inputs.version }}" == "" && "${{ github.event.inputs.enviroment }}" == "PROD" ]; then
+              echo "Version is required"
+              exit 1
+            fi
+          fi
+        shell: bash
+
       - name: Print actor of the event and of cloned pull request
-        run: | 
+        run: |
           echo ${{ github.actor }}
           echo ${{ github.event.pull_request.user.login }}
         shell: bash
-      
+
       - name: print hello if actor is not jarvis
         run: echo "Hello"
         shell: bash
