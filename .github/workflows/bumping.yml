@@ -39,3 +39,11 @@ jobs:
       - name: print hello if actor is not jarvis
         run: echo "Hello"
         shell: bash
+
+  tag-to-deploy:
+    needs: update-version
+    uses: ./.github/workflows/tag_to_deploy.yml
+    with:
+      environment: ${{ github.event.inputs.enviroment }}
+    permissions: write-all
+    secrets: inherit
