@@ -24,3 +24,13 @@ jobs:
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
           MERGE_LABELS: "version"
           MERGE_REQUIRED_APPROVALS: "0"
+
+  tag_to_deploy:
+    name: "🏷️ Create tag"
+    needs: automerge
+    uses: ./.github/workflows/tag_to_deploy.yml
+    permissions: write-all
+    secrets: inherit
+    with:
+      # TODO: THINK HOW TO PASS THE ENV FROM BUMPING TO TAG_TO_DEPLOY WHEN AUTOMERGE HAPPENS
+      environment: ${{github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'DEV'}}
