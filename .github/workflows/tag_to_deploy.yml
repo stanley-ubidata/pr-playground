@@ -5,6 +5,11 @@ on:
     types: [closed]
     branches:
       - main
+  workflow_call:
+    inputs:
+      environment:
+        required: true
+        type: string
 
 jobs:
   create_tag_if_label_version:
