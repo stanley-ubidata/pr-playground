@@ -39,6 +39,7 @@ jobs:
     needs: envionment-check
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v3
       - name: Print actor
         run: |
           echo ${{ github.actor }}
