@@ -17,23 +17,24 @@ on:
         required: false
 
 jobs:
-  update-version:
+  envionment-check:
     runs-on: ubuntu-latest
     steps:
       - name: Check if version is required based on environment value
         run: |
           if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
-            if [ "${{ github.event.inputs.version }}" == "" && "${{ github.event.inputs.enviroment }}" == "PROD" ]; then
+            if [ "${{ github.event.inputs.version }}" == "" && "${{ github.event.inputs.enviroment }}" == "QA" ]; then
               echo "Version is required"
               exit 1
             fi
           fi
         shell: bash
-
+  update-version:
+    runs-on: ubuntu-latest
+    steps:
       - name: Print actor of the event and of cloned pull request
         run: |
           echo ${{ github.actor }}
-          echo ${{ github.event.pull_request.user.login }}
           echo "PR by ${{ github.actor }} from ${{ github.event.pull_request.head.ref }} to ${{ github.event.pull_request.base.ref }}"
         shell: bash
 
