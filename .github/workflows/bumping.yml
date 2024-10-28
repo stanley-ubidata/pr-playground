@@ -23,13 +23,15 @@ jobs:
       - name: Check if version is required based on environment value
         run: |
           if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
-            if [ "${{ github.event.inputs.version }}" == "" && "${{ github.event.inputs.enviroment }}" == "QA" ]; then
-              echo "Version is required"
+            # if version is empty AND envrionement is QA
+            if [ -z "${{ github.event.inputs.version }}" ] && [ "${{ github.event.inputs.enviroment }}" == "QA" ]; then
+              echo "Version is required for QA"
               exit 1
             fi
           fi
         shell: bash
   update-version:
+    needs: envionment-check
     runs-on: ubuntu-latest
     steps:
       - name: Print actor of the event and of cloned pull request
