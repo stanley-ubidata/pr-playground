@@ -2,9 +2,9 @@ name: Run on specific branch
 
 on:
   push:
-    branches-ignore: 
-      - 'main'     
-      - 'version*' # Automated PR from bot. No need to run the workflow
+    branches-ignore:
+      - "main"
+      - "version*" # Automated PR from bot. No need to run the workflow
   workflow_dispatch:
 
 jobs:
@@ -13,7 +13,10 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Run tests
-        run: echo "Running tests..." 
+        run: echo "Running tests..."
       - name: Print branch name
         run: |
-         echo "Branch name: ${{ github.ref }}"
+          echo "Branch name: ${{ github.ref }}"
+      - name: File list
+        run: |
+          ls -la
