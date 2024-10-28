@@ -39,20 +39,66 @@ jobs:
     needs: envionment-check
     runs-on: ubuntu-latest
     steps:
-      - name: Print actor of the event and of cloned pull request
+      - name: Print actor
         run: |
           echo ${{ github.actor }}
-          echo "PR by ${{ github.actor }} from ${{ github.event.pull_request.head.ref }} to ${{ github.event.pull_request.base.ref }}"
+          echo ${{ github.event.pull_request.head.ref }}
         shell: bash
 
       - name: print hello if actor is not jarvis
+        if: ${{ github.actor == 'jarvis-ubidata' }}
         run: echo "Hello"
         shell: bash
 
-  tag-to-deploy:
-    needs: update-version
-    uses: ./.github/workflows/tag_to_deploy.yml
-    with:
-      environment: ${{ github.event.inputs.enviroment }}
-    permissions: write-all
-    secrets: inherit
+      - name: Update version
+        id: update_monorepo_version
+        run: |
+          ## get the current version
+          current_version=$(cat VERSION)
+
+          ## print the current version
+          echo "Current version: $current_version"
+
+          # Run the shell script and capture its output
+          new_version=$(python bump_version.py $current_version)
+
+          # Print the captured output for verification
+          echo "Shell script output: $new_version"
+
+          ## print the new version
+          echo "$new_version" > VERSION
+
+        shell: bash
+
+      - name: Set environment variable
+        env:
+          NEW_VERSION: ${{ steps.update_monorepo_version.outputs.new_version }}
+        id: set_env_variable
+        shell: bash
+        run: |
+          # Navigate to the apps directory
+
+          # Assign file content to an environment variable
+          export NEW_VERSION=$(cat VERSION)
+
+          # Display the environment variable
+          echo "New version from environment variable: $NEW_VERSION"
+
+          # Set the environment variable for the next steps GITHUB
+          echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          reviewers: ${{ github.actor }}
+          body: |
+            This PR updates the version file to ${{ env.NEW_VERSION }}.
+            Version update from PR created by ${{ github.actor }} on ${{ github.event.pull_request.head.ref }}.
+
+          commit-message: Update version file through script
+          title: "Bump version to ${{ env.NEW_VERSION }}"
+          delete-branch: true
+          labels: version
+          branch: version-${{ env.NEW_VERSION}}
+          base: main
