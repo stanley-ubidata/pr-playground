@@ -51,6 +51,14 @@ jobs:
         run: echo "Hello"
         shell: bash
 
+      - name: Get latest tag containing environment name
+        id: get_latest_tag
+        run: |
+          latest_tag=$(git tag --list "*${{ github.event.inputs.enviroment }}*" --sort=-v:refname | head -n 1)
+          echo "Latest tag: $latest_tag"
+          echo "::set-output name=latest_tag::$latest_tag"
+        shell: bash
+
       - name: Update version
         id: update_monorepo_version
         run: |
