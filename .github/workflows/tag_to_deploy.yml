@@ -24,7 +24,7 @@ jobs:
         run: echo "Creating tag v${{ env.NEW_VERSION }}"
 
   deploy_to_qa:
-    if: ${{ github.event.pull_request.merged == true && contains(github.event.pull_request.labels.*.name, 'version') }}
+    if: ${{ github.event.pull_request.merged == true && contains(github.event.pull_request.head.ref, 'version') }}
     uses: ./.github/workflows/deploy.yml
     secrets: inherit
     permissions: write-all
