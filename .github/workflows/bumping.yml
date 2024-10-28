@@ -12,7 +12,12 @@ on:
         type: environment
         default: DEV
         required: true
-      version:
+      min_version:
+        type: number
+        default: "-"
+        required: false
+      major_version:
+        default: "-"
         type: number
         required: false
 
@@ -23,8 +28,8 @@ jobs:
       - name: Check if version is required based on environment value
         run: |
           if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
-            # if version is empty AND envrionement is QA
-            if [ -z "${{ github.event.inputs.version }}" ] && [ "${{ github.event.inputs.enviroment }}" == "QA" ]; then
+            # if version is empty or dash AND envrionement is QA
+            if [ "${{ github.event.inputs.enviroment }}" == "QA" ] && [ "${{ github.event.inputs.min_version }}" == "-" ]; then
               echo "Version is required for QA"
               exit 1
             fi
