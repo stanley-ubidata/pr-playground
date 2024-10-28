@@ -21,7 +21,7 @@ def bump_version(version):
     new_version = f"{major}.{minor}.{patch}+{build_number}"
 
     # Navigate to the folder on top
-    folder_path = "../../apps"
+    folder_path = "./"
 
     # Assign the new version value to file called VERSION
     version_file_path = os.path.join(folder_path, "VERSION")
