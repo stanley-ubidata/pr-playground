@@ -36,6 +36,9 @@ jobs:
           fi
         shell: bash
   update-version:
+    permissions:
+      contents: write
+      pull-requests: write
     needs: envionment-check
     runs-on: ubuntu-latest
     steps:
