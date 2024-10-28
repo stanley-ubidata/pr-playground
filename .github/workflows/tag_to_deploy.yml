@@ -18,7 +18,7 @@ jobs:
     steps:
       - name: Create tag mock
         run: |
-          echo "Creating tag v${{ env.NEW_VERSION }}"
+          echo "Creating tag v${{ env.NEW_VERSION }}-${{ github.event.inputs.environment }}"
 
   create_tag_if_branch_starts_with_version:
     if: ${{ github.event.pull_request.merged == true && startsWith(github.event.pull_request.head.ref, 'version') }}
