@@ -8,7 +8,7 @@ on:
 
   workflow_dispatch:
     inputs:
-      enviroment:
+      environment:
         type: environment
         default: DEV
         required: true
@@ -39,7 +39,7 @@ jobs:
           echo "Event head branch: ${{ github.event.pull_request.head.ref }}"
           echo "Event merged: ${{ github.event.pull_request.merged }}"
           echo "Event labels: ${{ github.event.pull_request.labels.*.name }}"
-          echo "Event inputs: ${{ github.event.inputs.enviroment }}"
+          echo "Event inputs: ${{ github.event.inputs.environment }}"
           echo "Event actor: ${{ github.actor }}"
 
   trigger-check:
@@ -51,7 +51,7 @@ jobs:
         run: |
           if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
             # if version is empty or dash AND envrionement is QA
-            if [ "${{ github.event.inputs.enviroment }}" == "QA" ] && [ "${{ github.event.inputs.min_version }}" == "-" ]; then
+            if [ "${{ github.event.inputs.environment }}" == "QA" ] && [ "${{ github.event.inputs.min_version }}" == "-" ]; then
               echo "Version is required for QA environment"
               exit 1
             fi
