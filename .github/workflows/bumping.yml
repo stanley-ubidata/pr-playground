@@ -49,7 +49,7 @@ jobs:
     needs: trigger-check
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Print actor
         run: |
           echo ${{ github.actor }}
@@ -59,14 +59,6 @@ jobs:
       - name: print hello if actor is not jarvis
         if: ${{ github.actor == 'jarvis-ubidata' }}
         run: echo "Hello"
-        shell: bash
-
-      - name: Get latest tag containing environment name
-        id: get_latest_tag
-        run: |
-          latest_tag=$(git tag --list "*${{ github.event.inputs.enviroment }}*" --sort=-v:refname | head -n 1)
-          echo "Latest tag: $latest_tag"
-          echo "::set-output name=latest_tag::$latest_tag"
         shell: bash
 
       - name: Update version
