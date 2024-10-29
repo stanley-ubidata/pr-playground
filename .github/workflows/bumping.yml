@@ -26,22 +26,6 @@ on:
         required: false
 
 jobs:
-  tests:
-    runs-on: ubuntu-latest
-    steps:
-      - run: |
-          echo "Running tests"
-          # print event name, type and action
-          echo "Event name: ${{ github.event_name }}"
-          echo "Event type: ${{ github.event.pull_request.base.repo.full_name }}"
-          echo "Event action: ${{ github.event.action }}"
-          echo "Event branch: ${{ github.event.pull_request.base.ref }}"
-          echo "Event head branch: ${{ github.event.pull_request.head.ref }}"
-          echo "Event merged: ${{ github.event.pull_request.merged }}"
-          echo "Event labels: ${{ github.event.pull_request.labels.*.name }}"
-          echo "Event inputs: ${{ github.event.inputs.environment }}"
-          echo "Event actor: ${{ github.actor }}"
-
   trigger-check:
     name: 🚦 Trigger check
     if: ${{ github.event_name == 'pull_request' && (github.event.pull_request.merged == true && !contains(github.event.pull_request.labels.*.name, 'version')) || github.event_name == 'workflow_dispatch' }}
@@ -157,13 +141,13 @@ jobs:
           # Verify the output
           echo "Environment variable: $(cat $GITHUB_OUTPUT | grep environment | cut -d'=' -f2)"
           echo "Env variable: ${{ steps.set_env_variable.outputs.environment }}"
-          echo "As or: ${{ github.event.inputs.environment || 'HEY' }}"
-          echo inputs.environment: ${{ inputs.environment || 'HEY2' }}
+          echo "As or: ${{ github.event.inputs.environment || 'DEVs' }}"
+          echo inputs.environment: ${{ inputs.environment }}
 
   setup:
     needs: determine_environment_by_trigger
     uses: ./.github/workflows/tag_to_deploy.yml
     with:
-      environment: ${{  github.event.inputs.environment || 'DEV' }}
+      environment: ${{  inputs.environment }}
     permissions: write-all
     secrets: inherit
