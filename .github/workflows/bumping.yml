@@ -114,12 +114,12 @@ jobs:
           branch: version-${{ env.NEW_VERSION}}
           base: main
 
-  determine-environment_by_trigger:
+  determine_environment_by_trigger:
     name: 🧪 Determine environment
     runs-on: ubuntu-latest
     needs: update-version
     outputs:
-      environment: ${{ steps.set_env_variable.outputs.ENVIRONMENT }}
+      environment:
     steps:
       - name: Set environment variable
         id: set_env_variable
@@ -128,9 +128,9 @@ jobs:
           echo "ENVIRONMENT=${{ github.event.inputs.enviroment || 'DEV' }}" >> $GITHUB_ENV
 
   setup:
-    needs: determine-environment_by_trigger
+    needs: determine_environment_by_trigger
     uses: ./.github/workflows/tag_to_deploy.yml
     with:
-      environment: ${{ needs.determine-environment_by_trigger.outputs.environment }}
+      environment: ${{ needs.determine_environment_by_trigger.outputs.environment }}
     permissions: write-all
     secrets: inherit
