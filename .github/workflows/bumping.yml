@@ -140,15 +140,23 @@ jobs:
       - name: Set environment variable
         id: set_env_variable
         run: |
-          # If the event is a pull request, env is DEV. Otherwise, it is the input value from the workflow_dispatch.
           if [ "${{ github.event_name }}" == "pull_request" ]; then
             echo "environment=DEV" >> $GITHUB_OUTPUT
+          elif [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+            if [ -n "${{ github.event.inputs.environment }}" ]; then
+              echo "environment=${{ github.event.inputs.environment }}" >> $GITHUB_OUTPUT
+            else
+              echo "Error: No environment specified in workflow dispatch"
+              exit 1
+            fi
           else
-            echo "environment=${{ github.event.inputs.environment }}" >> $GITHUB_OUTPUT
+            echo "Error: Unexpected event type"
+            exit 1
           fi
 
-          # Display the environment variable to verify it
-          echo "Environment variable: $environment"
+          # Verify the output
+          echo "Environment variable: $(cat $GITHUB_OUTPUT | grep environment | cut -d'=' -f2)"
+
   setup:
     needs: determine_environment_by_trigger
     uses: ./.github/workflows/tag_to_deploy.yml
