@@ -120,6 +120,7 @@ jobs:
           base: main
 
   automerge:
+    needs: update-version
     runs-on: ubuntu-latest
     permissions:
       contents: write
