@@ -136,7 +136,7 @@ jobs:
           echo "ENVIRONMENT=${{ github.event.inputs.enviroment || 'DEV' }}" >> $GITHUB_ENV
 
   tag_to_deploy:
-    needs: update-version
+    needs: determine-environment_by_trigger
     uses: ./.github/workflows/tag_to_deploy.yml
     with:
       environment: ${{ needs.determine-environment_by_trigger.outputs.environment }}
