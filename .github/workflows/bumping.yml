@@ -40,7 +40,6 @@ jobs:
           fi
         shell: bash
   update-version:
-    if: ${{ github.event_name == 'pull_request' && github.event.pull_request.merged == true && contains(github.event.pull_request.labels.*.name, 'version') || github.event_name == 'workflow_dispatch' }}
     permissions:
       contents: write
       pull-requests: write
