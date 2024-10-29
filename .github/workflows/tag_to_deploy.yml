@@ -9,6 +9,7 @@ on:
 
 jobs:
   create_tag:
+    permissions: write-all
     name: 🏷️ Create/Update tag
     runs-on: ubuntu-latest
     steps:
