@@ -158,6 +158,7 @@ jobs:
           echo "Environment variable: $(cat $GITHUB_OUTPUT | grep environment | cut -d'=' -f2)"
           echo "Env variable: ${{ steps.set_env_variable.outputs.environment }}"
           echo "As or: ${{ github.event.inputs.environment || 'HEY' }}"
+          echo inputs.environment: ${{ inputs.environment || 'HEY2' }}
 
   setup:
     needs: determine_environment_by_trigger
