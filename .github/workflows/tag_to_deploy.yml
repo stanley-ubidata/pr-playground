@@ -34,7 +34,7 @@ jobs:
           echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
 
           # Display the environment variable to verify it
-          echo "Environment variable input: ${{ github.event.inputs.environment }}"
+          echo "Environment variable input: ${{ inputs.environment }}"
 
       - name: 🏷️ Create/update tag
         uses: actions/github-script@v7
