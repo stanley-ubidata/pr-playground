@@ -39,7 +39,7 @@ jobs:
           echo "Event head branch: ${{ github.event.pull_request.head.ref }}"
           echo "Event merged: ${{ github.event.pull_request.merged }}"
           echo "Event labels: ${{ github.event.pull_request.labels.*.name }}"
-          echo "Event inputs: ${{ github.event.inputs }}"
+          echo "Event inputs: ${{ github.event.inputs.enviroment }}"
           echo "Event actor: ${{ github.actor }}"
 
   trigger-check:
