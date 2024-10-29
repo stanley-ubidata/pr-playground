@@ -21,7 +21,6 @@ jobs:
         shell: bash
         run: |
           # Navigate to the apps directory
-          cd ./apps
 
           # Assign file content to an environment variable
           export NEW_VERSION=$(cat VERSION)
@@ -68,6 +67,7 @@ jobs:
             }
 
   deploy_to_qa:
+    needs: create_tag
     if: ${{ github.event.pull_request.merged == true && contains(github.event.pull_request.head.ref, 'version') }}
     uses: ./.github/workflows/deploy.yml
     secrets: inherit
