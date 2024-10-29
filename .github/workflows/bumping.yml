@@ -156,11 +156,13 @@ jobs:
 
           # Verify the output
           echo "Environment variable: $(cat $GITHUB_OUTPUT | grep environment | cut -d'=' -f2)"
+          echo "Env variable: ${{ steps.set_env_variable.outputs.environment }}"
+          echo "As or: ${{ github.event.inputs.environment || 'HEY' }}"
 
   setup:
     needs: determine_environment_by_trigger
     uses: ./.github/workflows/tag_to_deploy.yml
     with:
-      environment: ${{ needs.determine_environment_by_trigger.outputs.environment }}
+      environment: ${{  github.event.inputs.environment || 'DEV' }}
     permissions: write-all
     secrets: inherit
