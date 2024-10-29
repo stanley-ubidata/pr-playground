@@ -42,7 +42,7 @@ jobs:
           github-token: ${{ secrets.STANLEY_TOKEN }}
           script: |
             const { owner, repo } = context.repo;
-            const newTag = 'v${{ env.NEW_VERSION }}-${{ github.event.inputs.environment }}';
+            const newTag = 'v${{ env.NEW_VERSION }}-${{ inputs.environment }}';
             const sha = context.sha;
 
             try {
