@@ -149,6 +149,6 @@ jobs:
     needs: determine_environment_by_trigger
     uses: ./.github/workflows/tag_to_deploy.yml
     with:
-      environment: ${{ inputs.environment }}
+      environment: ${{ inputs.environment || 'DEVab' }}
     permissions: write-all
     secrets: inherit
