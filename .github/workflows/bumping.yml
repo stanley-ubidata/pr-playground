@@ -122,10 +122,23 @@ jobs:
           branch: version-${{ env.NEW_VERSION}}
           base: main
 
+  determine-environment_by_trigger:
+    name: 🧪 Determine environment
+    runs-on: ubuntu-latest
+    needs: update-version
+    outputs:
+      environment: ${{ steps.set_env_variable.outputs.ENVIRONMENT }}
+    steps:
+      - name: Set environment variable
+        id: set_env_variable
+        run: |
+          # if the event is a pull request, env is DEV. otherwise, it is the input value from the workflow_dispatch
+          echo "ENVIRONMENT=${{ github.event.inputs.enviroment || 'DEV' }}" >> $GITHUB_ENV
+
   tag_to_deploy:
     needs: update-version
     uses: ./.github/workflows/tag_to_deploy.yml
+    with:
+      environment: ${{ needs.determine-environment_by_trigger.outputs.environment }}
     permissions: write-all
     secrets: inherit
-    with:
-      environment: ${{ github.event_name == 'pull_request' ? 'DEV' : github.event.inputs.enviroment }}
