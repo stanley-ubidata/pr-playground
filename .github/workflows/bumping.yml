@@ -127,4 +127,4 @@ jobs:
     permissions: write-all
     secrets: inherit
     with:
-      environment: ${{ github.event.inputs.enviroment }}
+      environment: ${{ github.event_name == 'pull_request' ? 'DEV' : github.event.inputs.enviroment }}
