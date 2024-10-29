@@ -146,6 +146,9 @@ jobs:
           else
             echo "environment=${{ github.event.inputs.environment }}" >> $GITHUB_OUTPUT
           fi
+
+          # Display the environment variable to verify it
+          echo "Environment variable: ${{ steps.set_env_variable.outputs.environment }}"
   setup:
     needs: determine_environment_by_trigger
     uses: ./.github/workflows/tag_to_deploy.yml
