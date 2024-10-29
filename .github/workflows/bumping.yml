@@ -135,7 +135,7 @@ jobs:
           # if the event is a pull request, env is DEV. otherwise, it is the input value from the workflow_dispatch
           echo "ENVIRONMENT=${{ github.event.inputs.enviroment || 'DEV' }}" >> $GITHUB_ENV
 
-  tag_to_deploy:
+  setup:
     needs: determine-environment_by_trigger
     uses: ./.github/workflows/tag_to_deploy.yml
     with:
