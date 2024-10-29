@@ -22,7 +22,6 @@ jobs:
         shell: bash
         run: |
           # Navigate to the apps directory
-          cd ./apps
 
           # Assign file content to an environment variable
           export NEW_VERSION=$(cat VERSION)
