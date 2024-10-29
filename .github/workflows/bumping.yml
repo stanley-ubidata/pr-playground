@@ -27,6 +27,7 @@ on:
 
 jobs:
   trigger-check:
+    name: 🚦 Trigger check
     if: ${{ github.event_name == 'pull_request' && (github.event.pull_request.merged == true && !contains(github.event.pull_request.labels.*.name, 'version')) || github.event_name == 'workflow_dispatch' }}
     runs-on: ubuntu-latest
     steps:
@@ -41,6 +42,7 @@ jobs:
           fi
         shell: bash
   update-version:
+    name: 📜 Update version
     permissions:
       contents: write
       pull-requests: write
@@ -121,7 +123,6 @@ jobs:
           base: main
 
   tag_to_deploy:
-    name: "🏷️ Create tag"
     needs: update-version
     uses: ./.github/workflows/tag_to_deploy.yml
     permissions: write-all

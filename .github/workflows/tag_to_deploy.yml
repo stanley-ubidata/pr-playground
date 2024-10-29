@@ -9,6 +9,7 @@ on:
 
 jobs:
   create_tag:
+    name: 🏷️ Create/Update tag
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -67,6 +68,7 @@ jobs:
             }
 
   deploy_to_qa:
+    name: 🚀 Deploy
     needs: create_tag
     if: ${{ github.event.pull_request.merged == true && contains(github.event.pull_request.head.ref, 'version') }}
     uses: ./.github/workflows/deploy.yml
