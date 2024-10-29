@@ -118,3 +118,17 @@ jobs:
           labels: version
           branch: version-${{ env.NEW_VERSION}}
           base: main
+
+  automerge:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - id: automerge
+        name: automerge
+        uses: "pascalgn/automerge-action@v0.16.4"
+        env:
+          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+          MERGE_LABELS: "version"
+          MERGE_REQUIRED_APPROVALS: "0"
