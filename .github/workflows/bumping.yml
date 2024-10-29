@@ -134,3 +134,12 @@ jobs:
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
           MERGE_LABELS: "version"
           MERGE_REQUIRED_APPROVALS: "0"
+
+  tag_to_deploy:
+    name: "🏷️ Create tag"
+    needs: automerge
+    uses: ./.github/workflows/tag_to_deploy.yml
+    permissions: write-all
+    secrets: inherit
+    with:
+      environment: ${{ github.event.inputs.enviroment }}
