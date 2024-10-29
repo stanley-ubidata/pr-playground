@@ -26,7 +26,8 @@ on:
         required: false
 
 jobs:
-  envionment-check:
+  trigger-check:
+    if: ${{ github.event_name == 'pull_request' && (github.event.pull_request.merged == true && !contains(github.event.pull_request.labels.*.name, 'version')) || github.event_name == 'workflow_dispatch' }}
     runs-on: ubuntu-latest
     steps:
       - name: Check if version is required based on environment value
