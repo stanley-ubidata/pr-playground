@@ -41,6 +41,10 @@ jobs:
           const lastEnvironmentTag = $(git tag -l | grep 'DEV' | tail -n 1)
           echo "Last tag that contains the environment name: $lastEnvironmentTag"
 
+          # create a new tag from the last tag that contains the environment name QA
+          const newTag = $(echo $lastEnvironmentTag | sed 's/DEV/QA/')
+          echo "New tag: $newTag"
+
         shell: bash
 
   # trigger-check:
