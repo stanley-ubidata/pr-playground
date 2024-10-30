@@ -11,172 +11,173 @@ on:
       environment:
         type: environment
         default: DEV
-        description: "Environment to deploy to"
         required: true
+        description: "Environment to deploy to"
       patch_version:
         type: number
+        default: "-"
+        required: false
         description: "Patch Version (STAG/PROD) ONLY"
-        default: "-"
-        required: false
       min_version:
-        type: number
         default: "-"
-        description: "Minor Version (STAG/PROD) ONLY"
+        type: number
         required: false
+        description: "Minor Version (STAG/PROD) ONLY"
       major_version:
         default: "-"
-        description: "Major Version (STAG/PROD) ONLY"
         type: number
         required: false
+        description: "Major Version (STAG/PROD) ONLY"
 
 jobs:
   #job that retrieves the list of tags that contain the environment name
-  get-tags:
-    name: Get tags
+  # get-tags:
+  #   name: Get tags
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v2
+
+  #     - name: Get tags
+  #       id: get_tags
+  #       run: |
+  #         # Display the ref
+  #         echo "The workflow was triggered from: $GITHUB_REF"
+  #         # get the last tag that contains the environment name
+
+  #       shell: bash
+
+  trigger-check:
+    name: 🚦 Trigger check
+    if: ${{ github.event_name == 'pull_request' && (github.event.pull_request.merged == true && !contains(github.event.pull_request.labels.*.name, 'version')) || github.event_name == 'workflow_dispatch' }}
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Get tags
-        id: get_tags
+      - name: Check if version is required based on environment value
         run: |
-          # Display the ref
-          echo "The workflow was triggered from: $GITHUB_REF"
-          # get the last tag that contains the environment name
+          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+
+            # Check for DEV environment
+            if [ "${{ github.event.inputs.environment }}" == "DEV" ]; then
+              if [ "${{ github.event.inputs.major_version }}" != "-" ] || [ "${{ github.event.inputs.min_version }}" != "-" ] || [ "${{ github.event.inputs.patch_version }}" != "-" ]; then
+                echo "Major, minor, and patch versions are not required for DEV environment"
+                exit 1
+              fi
+            fi
+
+            # Check for QA environment
+            if [ "${{ github.event.inputs.environment }}" == "QA" ]; then
+              if [ "${{ github.event.inputs.major_version }}" == "-" ] || [ "${{ github.event.inputs.min_version }}" == "-" ] || [ "${{ github.event.inputs.patch_version }}" == "-" ]; then
+                echo "Major, minor, and patch versions are required for QA environment"
+                exit 1
+            fi
+          fi
+        shell: bash
+
+  update-version:
+    name: 📜 Update version
+    permissions:
+      contents: write
+      pull-requests: write
+    needs: trigger-check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Print actor
+        run: |
+          echo ${{ github.actor }}
+          echo ${{ github.event.pull_request.head.ref }}
+        shell: bash
+
+      - name: print hello if actor is not jarvis
+        if: ${{ github.actor == 'jarvis-ubidata' }}
+        run: echo "Hello"
+        shell: bash
+
+      - name: Update version
+        id: update_monorepo_version
+        run: |
+          ## get the current version
+          current_version=$(cat VERSION)
+
+          ## print the current version
+          echo "Current version: $current_version"
+
+          # Run the shell script and capture its output
+          new_version=$(python bump_version.py $current_version ${{ inputs.environment || 'DEV'}} ${{ github.event.inputs.major_version }} ${{ github.event.inputs.min_version }} ${{ github.event.inputs.patch_version }})
+
+          # Print the captured output for verification
+          echo "Shell script output: $new_version"
+
+          ## print the new version
+          echo "$new_version" > VERSION
 
         shell: bash
 
-  # trigger-check:
-  #   name: 🚦 Trigger check
-  #   if: ${{ github.event_name == 'pull_request' && (github.event.pull_request.merged == true && !contains(github.event.pull_request.labels.*.name, 'version')) || github.event_name == 'workflow_dispatch' }}
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Check if version is required based on environment value
-  #       run: |
-  #         if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+      - name: Set environment variable
+        env:
+          NEW_VERSION: ${{ steps.update_monorepo_version.outputs.new_version }}
+        id: set_env_variable
+        shell: bash
+        run: |
+          # Navigate to the apps directory
 
-  #           # Check for DEV environment
-  #           if [ "${{ github.event.inputs.environment }}" == "DEV" ]; then
-  #             if [ "${{ github.event.inputs.major_version }}" != "-" ] || [ "${{ github.event.inputs.min_version }}" != "-" ] || [ "${{ github.event.inputs.patch_version }}" != "-" ]; then
-  #               echo "Major, minor, and patch versions are not required for DEV environment"
-  #               exit 1
-  #             fi
-  #           fi
+          # Assign file content to an environment variable
+          export NEW_VERSION=$(cat VERSION)
 
-  #           # Check for QA environment
-  #           if [ "${{ github.event.inputs.environment }}" == "QA" ]; then
-  #             if [ "${{ github.event.inputs.major_version }}" == "-" ] || [ "${{ github.event.inputs.min_version }}" == "-" ] || [ "${{ github.event.inputs.patch_version }}" == "-" ]; then
-  #               echo "Major, minor, and patch versions are required for QA environment"
-  #               exit 1
-  #           fi
-  #         fi
-  #       shell: bash
-  # update-version:
-  #   name: 📜 Update version
-  #   permissions:
-  #     contents: write
-  #     pull-requests: write
-  #   needs: trigger-check
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #     - name: Print actor
-  #       run: |
-  #         echo ${{ github.actor }}
-  #         echo ${{ github.event.pull_request.head.ref }}
-  #       shell: bash
+          # Display the environment variable
+          echo "New version from environment variable: $NEW_VERSION"
 
-  #     - name: print hello if actor is not jarvis
-  #       if: ${{ github.actor == 'jarvis-ubidata' }}
-  #       run: echo "Hello"
-  #       shell: bash
+          # Set the environment variable for the next steps GITHUB
+          echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
 
-  #     - name: Update version
-  #       id: update_monorepo_version
-  #       run: |
-  #         ## get the current version
-  #         current_version=$(cat VERSION)
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.STANLEY_TOKEN }}
+          reviewers: ${{ github.actor }}
+          body: |
+            This PR updates the version file to ${{ env.NEW_VERSION }}.
+            Version update from PR created by ${{ github.actor }} on ${{ github.event.pull_request.head.ref }}.
 
-  #         ## print the current version
-  #         echo "Current version: $current_version"
+          commit-message: Update version file through script
+          title: "Bump version to ${{ env.NEW_VERSION }}"
+          delete-branch: true
+          labels: version
+          branch: version-${{ env.NEW_VERSION}}
+          base: main
 
-  #         # Run the shell script and capture its output
-  #         new_version=$(python bump_version.py $current_version ${{ inputs.environment || 'DEV'}} ${{ github.event.inputs.major_version }} ${{ github.event.inputs.min_version }} ${{ github.event.inputs.patch_version }})
+  determine_environment_by_trigger:
+    name: 🧪 Determine environment
+    runs-on: ubuntu-latest
+    needs: update-version
+    outputs:
+      environment: ${{ steps.set_env_variable.outputs.environment }}
+    steps:
+      - name: Set environment variable
+        id: set_env_variable
+        run: |
+          if [ "${{ github.event_name }}" == "pull_request" ]; then
+            echo "environment=DEV" >> $GITHUB_OUTPUT
+          elif [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+            if [ -n "${{ github.event.inputs.environment }}" ]; then
+              echo "environment=${{ github.event.inputs.environment }}" >> $GITHUB_OUTPUT
+            else
+              echo "Error: No environment specified in workflow dispatch"
+              exit 1
+            fi
+          else
+            echo "Error: Unexpected event type"
+            exit 1
+          fi
 
-  #         # Print the captured output for verification
-  #         echo "Shell script output: $new_version"
+          # Verify the output
+          echo "Environment variable: $(cat $GITHUB_OUTPUT | grep environment | cut -d'=' -f2)"
+          echo "inputs.environment: ${{ inputs.environment }}"
 
-  #         ## print the new version
-  #         echo "$new_version" > VERSION
-
-  #       shell: bash
-
-  #     - name: Set environment variable
-  #       env:
-  #         NEW_VERSION: ${{ steps.update_monorepo_version.outputs.new_version }}
-  #       id: set_env_variable
-  #       shell: bash
-  #       run: |
-  #         # Navigate to the apps directory
-
-  #         # Assign file content to an environment variable
-  #         export NEW_VERSION=$(cat VERSION)
-
-  #         # Display the environment variable
-  #         echo "New version from environment variable: $NEW_VERSION"
-
-  #         # Set the environment variable for the next steps GITHUB
-  #         echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
-
-  #     - name: Create Pull Request
-  #       uses: peter-evans/create-pull-request@v6
-  #       with:
-  #         token: ${{ secrets.STANLEY_TOKEN }}
-  #         reviewers: ${{ github.actor }}
-  #         body: |
-  #           This PR updates the version file to ${{ env.NEW_VERSION }}.
-  #           Version update from PR created by ${{ github.actor }} on ${{ github.event.pull_request.head.ref }}.
-
-  #         commit-message: Update version file through script
-  #         title: "Bump version to ${{ env.NEW_VERSION }}"
-  #         delete-branch: true
-  #         labels: version
-  #         branch: version-${{ env.NEW_VERSION}}
-  #         base: main
-
-  # determine_environment_by_trigger:
-  #   name: 🧪 Determine environment
-  #   runs-on: ubuntu-latest
-  #   needs: update-version
-  #   outputs:
-  #     environment: ${{ steps.set_env_variable.outputs.environment }}
-  #   steps:
-  #     - name: Set environment variable
-  #       id: set_env_variable
-  #       run: |
-  #         if [ "${{ github.event_name }}" == "pull_request" ]; then
-  #           echo "environment=DEV" >> $GITHUB_OUTPUT
-  #         elif [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
-  #           if [ -n "${{ github.event.inputs.environment }}" ]; then
-  #             echo "environment=${{ github.event.inputs.environment }}" >> $GITHUB_OUTPUT
-  #           else
-  #             echo "Error: No environment specified in workflow dispatch"
-  #             exit 1
-  #           fi
-  #         else
-  #           echo "Error: Unexpected event type"
-  #           exit 1
-  #         fi
-
-  #         # Verify the output
-  #         echo "Environment variable: $(cat $GITHUB_OUTPUT | grep environment | cut -d'=' -f2)"
-  #         echo "inputs.environment: ${{ inputs.environment }}"
-
-  # setup:
-  #   needs: determine_environment_by_trigger
-  #   uses: ./.github/workflows/tag_to_deploy.yml
-  #   with:
-  #     environment: ${{ inputs.environment || 'DEV' }}
-  #   permissions: write-all
-  #   secrets: inherit
+  setup:
+    needs: determine_environment_by_trigger
+    uses: ./.github/workflows/tag_to_deploy.yml
+    with:
+      environment: ${{ inputs.environment || 'DEV' }}
+    permissions: write-all
+    secrets: inherit
