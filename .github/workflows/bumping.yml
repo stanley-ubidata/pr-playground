@@ -99,7 +99,7 @@ jobs:
 
       - name: Set environment variable
         env:
-          NEW_VERSION: ${{ steps.update_monorepo_version.outputs.new_version }}
+          NEW_VERSION: ${{ steps.update_monorepo_version.outputs.NEW_VERSION }}
         id: set_env_variable
         shell: bash
         run: |
