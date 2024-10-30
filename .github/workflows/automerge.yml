@@ -28,3 +28,7 @@ jobs:
           MERGE_LABELS: "version"
           MERGE_REQUIRED_APPROVALS: "0"
           MERGE_METHOD: "squash"
+          LOG: "TRACE"
+      - name: Feedback
+        if: steps.automerge.outputs.merged == 'true'
+        run: echo "Pull request ${{ steps.automerge.outputs.pullRequestNumber }} has been merged"
