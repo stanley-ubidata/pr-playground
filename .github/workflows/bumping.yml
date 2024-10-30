@@ -45,6 +45,9 @@ jobs:
           const newTag = $(echo $lastEnvironmentTag | sed 's/DEV/QA/')
           echo "New tag: $newTag"
 
+          # Display the ref
+          echo "Ref: $GITHUB_REF"
+
         shell: bash
 
   # trigger-check:
