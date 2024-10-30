@@ -135,6 +135,12 @@ jobs:
           branch: version-${{ env.NEW_VERSION}}
           base: main
 
+  automerge:
+    needs: update-version
+    permissions: write-all
+    secrets: inherit
+    uses: ./.github/workflows/automerge.yml
+
   determine_environment_by_trigger:
     name: 🧪 Determine environment
     runs-on: ubuntu-latest
