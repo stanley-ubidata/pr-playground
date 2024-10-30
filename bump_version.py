@@ -20,6 +20,9 @@ def bump_version(version,  environment="DEV", super_major="-", super_minor="-", 
     minor = int(version_numbers[1])
     patch = int(version_numbers[2])
 
+    print(f"Major: {major}")
+    print(f"Minor: {minor}")
+    print(f"Patch: {patch}")
     build_number += 1    
 
     if super_major != "-":
@@ -34,7 +37,6 @@ def bump_version(version,  environment="DEV", super_major="-", super_minor="-", 
             patch = super_patch
         elif environment == "QA":
             patch = patch + 1
-        
 
     # Create the new version string
     new_version = f"{major}.{minor}.{patch}+{build_number}"
