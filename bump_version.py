@@ -8,10 +8,11 @@ def bump_version(version,  environment="DEV", super_major="-", super_minor="-", 
     build_number = int(version_parts[1])
 
     print(f"Version part: {version_part}")
-    print(f"Evironment: {environment}")
+    print(f"Environment: {environment}")
     print(f"Super Major: {super_major}")
     print(f"Super Minor: {super_minor}")
     print(f"Super Patch: {super_patch}")
+    print(f"Build number: {build_number}")
 
     # Split version part into major, minor, patch
     version_numbers = version_part.split('.')
