@@ -40,13 +40,8 @@ jobs:
           # get the last tag that contains the environment name 
           const lastEnvironmentTag = $(git tag -l | grep 'DEV' | tail -n 1)
           echo "Last tag that contains the environment name: $lastEnvironmentTag"
-
-          # create a new tag from the last tag that contains the environment name QA
-          const newTag = $(echo $lastEnvironmentTag | sed 's/DEV/QA/')
-          echo "New tag: $newTag"
-
           # Display the ref
-          echo "Ref: $GITHUB_REF"
+          echo "The workflow was triggered from: $GITHUB_REF"
 
         shell: bash
 
