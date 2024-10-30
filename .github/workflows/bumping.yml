@@ -144,7 +144,7 @@ jobs:
   determine_environment_by_trigger:
     name: 🧪 Determine environment
     runs-on: ubuntu-latest
-    needs: update-version
+    needs: automerge
     outputs:
       environment: ${{ steps.set_env_variable.outputs.environment }}
     steps:
