@@ -14,7 +14,7 @@ on:
 jobs:
   automerge:
     name: 🔄 Automerge
-    if: github.event_name == 'pull_request' && github.event.action == 'labeled' && contains(github.event.pull_request.labels.*.name, 'version')
+    # if: github.event_name == 'pull_request' && github.event.action == 'labeled' && contains(github.event.pull_request.labels.*.name, 'version')
     runs-on: ubuntu-latest
     permissions:
       contents: write
