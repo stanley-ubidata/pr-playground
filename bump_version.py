@@ -1,11 +1,17 @@
 import sys
 import os
 
-def bump_version(version, super_major="-", super_minor="-", super_patch="-"):
+def bump_version(version,  environment="DEV", super_major="-", super_minor="-", super_patch="-"):
     # Split the version into version part and build number
     version_parts = version.split('+')
     version_part = version_parts[0]
     build_number = int(version_parts[1])
+
+    print(f"Version part: {version_part}")
+    print(f"Evironment: {environment}")
+    print(f"Super Major: {super_major}")
+    print(f"Super Minor: {super_minor}")
+    print(f"Super Patch: {super_patch}")
 
     # Split version part into major, minor, patch
     version_numbers = version_part.split('.')
@@ -23,7 +29,11 @@ def bump_version(version, super_major="-", super_minor="-", super_patch="-"):
         minor = super_minor
         patch = super_patch != "-" and super_patch or 0
     else:
-        patch = super_patch != "-" and super_patch or patch+1
+        if super_patch != "-":
+            patch = super_patch
+        elif environment == "QA":
+            patch = patch + 1
+        
 
     # Create the new version string
     new_version = f"{major}.{minor}.{patch}+{build_number}"
@@ -51,6 +61,8 @@ if __name__ == "__main__":
         bump_version(sys.argv[1], sys.argv[2], sys.argv[3])
     elif len(sys.argv) == 5:
         bump_version(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4])
+    elif len(sys.argv) == 6:
+        bump_version(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5])
     else:
         print("Too many arguments provided.")
 

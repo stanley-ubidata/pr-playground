@@ -34,10 +34,20 @@ jobs:
       - name: Check if version is required based on environment value
         run: |
           if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
-            # if version is empty or dash AND envrionement is QA
-            if [ "${{ github.event.inputs.environment }}" == "QA" ] && [ "${{ github.event.inputs.min_version }}" == "-" ]; then
-              echo "Version is required for QA environment"
-              exit 1
+
+            # Check for DEV environment
+            if [ "${{ github.event.inputs.environment }}" == "DEV" ]; then
+              if [ "${{ github.event.inputs.major_version }}" != "-" ] || [ "${{ github.event.inputs.min_version }}" != "-" ] || [ "${{ github.event.inputs.patch_version }}" != "-" ]; then
+                echo "Major, minor, and patch versions are not required for DEV environment"
+                exit 1
+              fi
+            fi
+
+            # Check for QA environment
+            if [ "${{ github.event.inputs.environment }}" == "QA" ]; then
+              if [ "${{ github.event.inputs.major_version }}" == "-" ] || [ "${{ github.event.inputs.min_version }}" == "-" ] || [ "${{ github.event.inputs.patch_version }}" == "-" ]; then
+                echo "Major, minor, and patch versions are required for QA environment"
+                exit 1
             fi
           fi
         shell: bash
@@ -71,7 +81,7 @@ jobs:
           echo "Current version: $current_version"
 
           # Run the shell script and capture its output
-          new_version=$(python bump_version.py $current_version ${{ github.event.inputs.major_version }} ${{ github.event.inputs.min_version }} ${{ github.event.inputs.patch_version }})
+          new_version=$(python bump_version.py $current_version ${{ inputs.environment || 'DEV'}} ${{ github.event.inputs.major_version }} ${{ github.event.inputs.min_version }} ${{ github.event.inputs.patch_version }})
 
           # Print the captured output for verification
           echo "Shell script output: $new_version"
