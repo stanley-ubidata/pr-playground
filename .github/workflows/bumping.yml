@@ -135,8 +135,18 @@ jobs:
           branch: version-${{ env.NEW_VERSION}}
           base: main
 
-  automerge:
+  delay:
     needs: update-version
+    name: Delay
+    if: ${{ github.event_name == 'pull_request' && (github.event.pull_request.merged == true && contains(github.event.pull_request.labels.*.name, 'version')) || github.event_name == 'workflow_dispatch' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Delay
+        run: echo "Delaying for 25 seconds"
+        shell: bash
+
+  automerge:
+    needs: delay
     name: 🔄 Automerge
     # if: github.event_name == 'pull_request' && github.event.action == 'labeled' && contains(github.event.pull_request.labels.*.name, 'version')
     runs-on: ubuntu-latest
