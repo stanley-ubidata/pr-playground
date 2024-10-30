@@ -11,18 +11,21 @@ on:
       environment:
         type: environment
         default: DEV
+        description: "Environment to deploy to"
         required: true
       patch_version:
         type: number
-        description: "Patch version to update to"
+        description: "Patch Version (STAG/PROD) ONLY"
         default: "-"
         required: false
       min_version:
         type: number
         default: "-"
+        description: "Minor Version (STAG/PROD) ONLY"
         required: false
       major_version:
         default: "-"
+        description: "Major Version (STAG/PROD) ONLY"
         type: number
         required: false
 
