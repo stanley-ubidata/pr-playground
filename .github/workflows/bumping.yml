@@ -103,6 +103,11 @@ jobs:
         id: set_env_variable
         shell: bash
         run: |
+
+          cat VERSION
+          echo "-----"
+          hexdump -C VERSION
+
           # Navigate to the apps directory
 
           # Assign file content to an environment variable
