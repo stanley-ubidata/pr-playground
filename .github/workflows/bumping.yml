@@ -26,7 +26,7 @@ on:
         required: false
 
 jobs:
-  #job that retrieves the list of tags
+  #job that retrieves the list of tags that contain the environment name
   get-tags:
     name: Get tags
     runs-on: ubuntu-latest
@@ -38,7 +38,8 @@ jobs:
         id: get_tags
         run: |
           git fetch --tags
-          git tag -l > tags.txt
+          git tag -l --sort=-v:refname | grep ${{ github.event.inputs.environment }} > tags.txt
+          cat tags.txt
         shell: bash
 
   # trigger-check:
