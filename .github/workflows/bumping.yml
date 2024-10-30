@@ -37,9 +37,10 @@ jobs:
       - name: Get tags
         id: get_tags
         run: |
-          git fetch --tags
-          git tag -l --sort=-v:refname | grep ${{ github.event.inputs.environment }} > tags.txt
-          cat tags.txt
+          # get the last tag that contains the environment name 
+          const lastEnvironmentTag = $(git tag -l | grep 'DEV' | tail -n 1)
+          echo "Last tag that contains the environment name: $lastEnvironmentTag"
+
         shell: bash
 
   # trigger-check:
