@@ -47,10 +47,10 @@ jobs:
               fi
             fi
 
-            # Check for QA environment
+            # QA environment should have not have a major, minor, and patch version.
             if [ "${{ github.event.inputs.environment }}" == "QA" ]; then
-              if [ "${{ github.event.inputs.major_version }}" == "-" ] || [ "${{ github.event.inputs.min_version }}" == "-" ] || [ "${{ github.event.inputs.patch_version }}" == "-" ]; then
-                echo "Major, minor, and patch versions are required for QA environment"
+              if [ "${{ github.event.inputs.major_version }}" != "-" ] || [ "${{ github.event.inputs.min_version }}" != "-" ] || [ "${{ github.event.inputs.patch_version }}" != "-" ]; then
+                echo "Major, minor, and patch versions should not be provided for QA environment"
                 exit 1
               fi
             fi
