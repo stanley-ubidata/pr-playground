@@ -14,6 +14,7 @@ on:
         required: true
       patch_version:
         type: number
+        description: "Patch version to update to"
         default: "-"
         required: false
       min_version:
@@ -39,9 +40,7 @@ jobs:
         run: |
           # Display the ref
           echo "The workflow was triggered from: $GITHUB_REF"
-          # get the last tag that contains the environment name 
-          lastEnvironmentTag=$(git tag -l | grep 'DEV' | tail -n 1)
-          echo "Last tag that contains the environment name: $lastEnvironmentTag"
+          # get the last tag that contains the environment name
 
         shell: bash
 
