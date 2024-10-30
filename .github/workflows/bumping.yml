@@ -106,13 +106,13 @@ jobs:
           # Navigate to the apps directory
 
           # Assign file content to an environment variable
-          export NEW_VERSION=$(cat VERSION)
+          NEW_VERSION=$(cat VERSION)
 
           # Display the environment variable
           echo "New version from environment variable: $NEW_VERSION"
 
           # Set the environment variable for the next steps GITHUB
-          echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
+          echo "NEW_VERSION=${NEW_VERSION}" >> $GITHUB_ENV
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v6
