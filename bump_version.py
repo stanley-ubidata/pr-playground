@@ -6,23 +6,12 @@ def bump_version(version,  environment="DEV", super_major="-", super_minor="-", 
     version_parts = version.split('+')
     version_part = version_parts[0]
     build_number = int(version_parts[1])
-
-    print(f"Version part: {version_part}")
-    print(f"Environment: {environment}")
-    print(f"Super Major: {super_major}")
-    print(f"Super Minor: {super_minor}")
-    print(f"Super Patch: {super_patch}")
-    print(f"Build number: {build_number}")
-
     # Split version part into major, minor, patch
     version_numbers = version_part.split('.')
     major = int(version_numbers[0])
     minor = int(version_numbers[1])
     patch = int(version_numbers[2])
 
-    print(f"Major: {major}")
-    print(f"Minor: {minor}")
-    print(f"Patch: {patch}")
     build_number += 1    
 
     if super_major != "-":
