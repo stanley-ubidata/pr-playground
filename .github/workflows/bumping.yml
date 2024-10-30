@@ -117,7 +117,7 @@ jobs:
           echo "New version from environment variable: $NEW_VERSION"
 
           # Set the environment variable for the next steps GITHUB
-          echo "NEW_VERSION=${NEW_VERSION}" >> $GITHUB_ENV
+          echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v6
