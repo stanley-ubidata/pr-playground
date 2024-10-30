@@ -40,7 +40,7 @@ jobs:
           # Display the ref
           echo "The workflow was triggered from: $GITHUB_REF"
           # get the last tag that contains the environment name 
-          const lastEnvironmentTag = '$(git tag -l | grep 'DEV' | tail -n 1)'
+          lastEnvironmentTag=$(git tag -l | grep 'DEV' | tail -n 1)
           echo "Last tag that contains the environment name: $lastEnvironmentTag"
 
         shell: bash
