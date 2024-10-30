@@ -99,25 +99,25 @@ jobs:
 
       - name: Set environment variable
         env:
-          NEW_VERSION: ${{ steps.update_monorepo_version.outputs.NEW_VERSION }}
+          NEW_VERSION: ${{ steps.update_monorepo_version.outputs.new_version }}
         id: set_env_variable
         shell: bash
         run: |
-
-          cat VERSION
-          echo "-----"
-          hexdump -C VERSION
-
           # Navigate to the apps directory
 
           # Assign file content to an environment variable
-          NEW_VERSION=$(cat VERSION)
+          export NEW_VERSION=$(cat VERSION)
 
           # Display the environment variable
           echo "New version from environment variable: $NEW_VERSION"
 
           # Set the environment variable for the next steps GITHUB
           echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
+
+      - name: Print new version
+        run: |
+          echo "New version: $NEW_VERSION"
+        shell: bash
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v6
