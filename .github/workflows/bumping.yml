@@ -30,23 +30,6 @@ on:
         description: "Major Version (STAG/PROD) ONLY"
 
 jobs:
-  #job that retrieves the list of tags that contain the environment name
-  # get-tags:
-  #   name: Get tags
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Checkout code
-  #       uses: actions/checkout@v2
-
-  #     - name: Get tags
-  #       id: get_tags
-  #       run: |
-  #         # Display the ref
-  #         echo "The workflow was triggered from: $GITHUB_REF"
-  #         # get the last tag that contains the environment name
-
-  #       shell: bash
-
   trigger-check:
     name: 🚦 Trigger check
     if: ${{ github.event_name == 'pull_request' && (github.event.pull_request.merged == true && !contains(github.event.pull_request.labels.*.name, 'version')) || github.event_name == 'workflow_dispatch' }}
@@ -69,6 +52,7 @@ jobs:
               if [ "${{ github.event.inputs.major_version }}" == "-" ] || [ "${{ github.event.inputs.min_version }}" == "-" ] || [ "${{ github.event.inputs.patch_version }}" == "-" ]; then
                 echo "Major, minor, and patch versions are required for QA environment"
                 exit 1
+              fi
             fi
           fi
         shell: bash
