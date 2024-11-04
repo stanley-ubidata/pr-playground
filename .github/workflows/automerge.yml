@@ -2,8 +2,8 @@ name: Automerge
 on:
   pull_request:
     types:
+      - opened
       - labeled
-      - ready_for_review
     paths:
       - VERSION
 
