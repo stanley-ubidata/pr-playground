@@ -5,8 +5,23 @@ on:
       - labeled
     paths:
       - VERSION
+  check_suite:
+    types:
+      - completed
 
 jobs:
+  print_actor:
+    name: Print actor
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print actor
+        run: |
+          echo ${{ github.actor }}
+          echo ${{ github.event.pull_request.head.ref }}
+          echo ${{ github.event.pull_request.labels.*.name }}
+          echo ${{ contains(github.event.pull_request.labels.*.name, 'version-env') }}
+        shell: bash
+
   check_pr:
     if: github.actor == 'jarvis-ubidata' && github.event.action == 'labeled' && contains(github.event.pull_request.labels.*.name, 'version-env')
     name: "Checks contributors"
