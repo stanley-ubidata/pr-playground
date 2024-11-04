@@ -12,15 +12,14 @@ jobs:
         id: pr_tags
         run: |
           echo "PR tags: ${{ github.event.pull_request.labels }}"
-          echo "::set-output name=tags::${{ github.event.pull_request.labels }}"
+          version_tag=$(echo ${{ github.event.pull_request.labels }} | grep -oP 'version-\K\w+')
+          echo "tags=${{ github.event.pull_request.labels }}" >> $GITHUB_ENV
 
       - name: Get PR title and body
         id: pr_title_body
         run: |
           echo "PR title: ${{ github.event.pull_request.title }}"
           echo "PR body: ${{ github.event.pull_request.body }}"
-          echo "::set-output name=title::${{ github.event.pull_request.title }}"
-          echo "::set-output name=body::${{ github.event.pull_request.body }}"
 
       - name: Check if PR title contains "WIP"
         id: check_wip
