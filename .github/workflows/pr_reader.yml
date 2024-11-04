@@ -13,6 +13,7 @@ jobs:
         run: |
           echo "PR tags: ${{ github.event.pull_request.labels }}"
           version_tag=$(echo ${{ toJson(github.event.pull_request.labels) }} | jq -r '.[] | select(.name | test("version")) | .name')
+          echo "Version tag: $version_tag"
           echo "tags=${{ github.event.pull_request.labels }}" >> $GITHUB_ENV
 
       - name: Get PR title and body
