@@ -50,8 +50,6 @@ jobs:
     steps:
       - name: Get Environment from Label
         id: get_env
-        env:
-          environment: ${{ steps.automerge.outputs.labels }}
         run: |
           echo "Environment is $environment"
 
@@ -62,10 +60,10 @@ jobs:
           echo "Environment: $github_label"
 
           ## set the environment to the github label
-          echo "env=$github_label" >> $GITHUB_ENV
+          echo "ENVIRONMENT=$github_label" >> $GITHUB_ENV
 
       - name: Set Environment
-        run: echo "Environment is ${{ env.environment }}
+        run: echo "Environment is ${{ env.ENVIRONMENT }}"
 
   setup:
     needs: get_env_from_label
