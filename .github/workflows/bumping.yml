@@ -131,52 +131,6 @@ jobs:
           commit-message: Update version file through script
           title: "Bump version to ${{ env.NEW_VERSION }}"
           delete-branch: true
-          labels: version
+          labels: version, env-${{ inputs.environment || 'DEV' }}
           branch: version-${{ env.NEW_VERSION}}
           base: main
-
-  delay:
-    needs: update-version
-    name: Delay
-    if: ${{ github.event_name == 'pull_request' && (github.event.pull_request.merged == true && contains(github.event.pull_request.labels.*.name, 'version')) || github.event_name == 'workflow_dispatch' }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: Delay
-        run: echo "Delaying for 25 seconds"
-        shell: bash
-
-  determine_environment_by_trigger:
-    name: 🧪 Determine environment
-    runs-on: ubuntu-latest
-    needs: delay
-    outputs:
-      environment: ${{ steps.set_env_variable.outputs.environment }}
-    steps:
-      - name: Set environment variable
-        id: set_env_variable
-        run: |
-          if [ "${{ github.event_name }}" == "pull_request" ]; then
-            echo "environment=DEV" >> $GITHUB_OUTPUT
-          elif [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
-            if [ -n "${{ github.event.inputs.environment }}" ]; then
-              echo "environment=${{ github.event.inputs.environment }}" >> $GITHUB_OUTPUT
-            else
-              echo "Error: No environment specified in workflow dispatch"
-              exit 1
-            fi
-          else
-            echo "Error: Unexpected event type"
-            exit 1
-          fi
-
-          # Verify the output
-          echo "Environment variable: $(cat $GITHUB_OUTPUT | grep environment | cut -d'=' -f2)"
-          echo "inputs.environment: ${{ inputs.environment }}"
-
-  setup:
-    needs: determine_environment_by_trigger
-    uses: ./.github/workflows/tag_to_deploy.yml
-    with:
-      environment: ${{ inputs.environment || 'DEV' }}
-    permissions: write-all
-    secrets: inherit

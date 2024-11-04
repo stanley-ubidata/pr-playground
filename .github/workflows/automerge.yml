@@ -31,3 +31,31 @@ jobs:
       - name: Feedback
         if: steps.automerge.outputs.merged == 'true'
         run: echo "Pull request ${{ steps.automerge.outputs.pullRequestNumber }} has been merged"
+
+  get_env_from_label:
+    needs: automerge
+    name: Get Environment from Label
+    runs-on: ubuntu-latest
+    outputs:
+      env: ${{ steps.get_env.outputs.env }}
+    steps:
+      - name: Get Environment from Label
+        id: get_env
+        uses: actions/github-script@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const labels = context.payload.pull_request.labels.map(label => label.name);
+            const env = labels.find(label => label.startsWith('env-'));
+            return { env: env ? env.split('-')[1] : 'DEV' }
+      - name: Set Environment
+        run: echo "Environment is ${{ steps.get_env.outputs.env }}"
+
+  setup:
+    needs: get_env_from_label
+    name: Setup
+    uses: ./.github/workflows/tag_to_deploy.yml
+    with:
+      environment: ${{ needs.get_env_from_label.outputs.env }}
+    permissions: write-all
+    secrets: inherit
