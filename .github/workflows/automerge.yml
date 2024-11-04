@@ -19,11 +19,12 @@ jobs:
           echo ${{ github.actor }}
           echo ${{ github.event.pull_request.head.ref }}
           echo ${{ github.event.pull_request.labels.*.name }}
+          echo ${{ github.event.action}}
           echo ${{ contains(github.event.pull_request.labels.*.name, 'version') }}
         shell: bash
 
   check_pr:
-    if: github.actor == 'jarvis-ubidata' && github.event.action == 'labeled' && contains(github.event.pull_request.labels.*.name, 'version-env')
+    if: github.actor == 'jarvis-ubidata' && contains(github.event.pull_request.labels.*.name, 'version-env')
     name: "Checks contributors"
     runs-on: ubuntu-latest
     steps:
