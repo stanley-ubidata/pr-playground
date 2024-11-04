@@ -24,7 +24,7 @@ jobs:
         shell: bash
 
   check_pr:
-    if: github.actor == 'jarvis-ubidata' && contains(github.event.pull_request.labels.*.name, 'version-env')
+    if: github.actor == 'jarvis-ubidata' && contains(github.event.pull_request.labels.*.name, 'version')
     name: "Checks contributors"
     runs-on: ubuntu-latest
     steps:
