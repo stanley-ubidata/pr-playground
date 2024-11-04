@@ -22,7 +22,7 @@ jobs:
   automerge:
     needs: check_pr
     name: 🔄 Automerge
-    if: github.actor == 'jarvis_ubidata' && github.event.action == 'labeled' && contains(github.event.pull_request.labels.*.name, 'version')
+    if: github.actor == 'jarvis-ubidata' && github.event.action == 'labeled' && contains(github.event.pull_request.labels.*.name, 'version')
     runs-on: ubuntu-latest
     permissions:
       contents: write
