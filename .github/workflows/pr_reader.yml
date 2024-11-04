@@ -1,7 +1,7 @@
 name: Pull Request Reader
 on:
   pull_request:
-    types: [opened, synchronize, reopened, ready_for_review]
+    types: [opened, synchronize, reopened, ready_for_review, closed]
 
 jobs:
   pr_reader:
@@ -12,7 +12,7 @@ jobs:
         id: pr_tags
         run: |
           echo "PR tags: ${{ github.event.pull_request.labels }}"
-          version_tag=$(echo ${{ github.event.pull_request.labels }} | grep -oP 'version-\K\w+')
+          version_tag=$(echo ${{ github.event.pull_request.labels }} | grep -oP 'version\K\w+')
           echo "tags=${{ github.event.pull_request.labels }}" >> $GITHUB_ENV
 
       - name: Get PR title and body
