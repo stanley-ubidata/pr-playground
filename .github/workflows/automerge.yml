@@ -19,7 +19,7 @@ jobs:
           echo ${{ github.actor }}
           echo ${{ github.event.pull_request.head.ref }}
           echo ${{ github.event.pull_request.labels.*.name }}
-          echo ${{ contains(github.event.pull_request.labels.*.name, 'version-env') }}
+          echo ${{ contains(github.event.pull_request.labels.*.name, 'version') }}
         shell: bash
 
   check_pr:
