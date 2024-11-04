@@ -70,10 +70,3 @@ jobs:
                 throw error;
               }
             }
-
-  deploy_to_qa:
-    name: 🚀 Deploy
-    needs: create_tag
-    uses: ./.github/workflows/deploy.yml
-    secrets: inherit
-    permissions: write-all
