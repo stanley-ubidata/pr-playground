@@ -3,16 +3,24 @@ on:
   pull_request:
     types:
       - ready_for_review
-  pull_request_review:
-    types:
-      - submitted
-  check_suite:
-    types:
-      - completed
+    paths:
+      - VERSION
+
 jobs:
+  check_pr:
+    name: "Checks contributors"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check PR
+        uses: JJ/github-pr-contains-action@releases/v14.1
+        with:
+          github-token: ${{secrets.GITHUB_TOKEN}}
+          linesChanged: 1
+          filesChanged: 1
+
   automerge:
     name: 🔄 Automerge
-    if: github.event_name == 'pull_request' && github.event.action == 'labeled' && contains(github.event.pull_request.labels.*.name, 'version')
+    if: github.actor == 'jarvis_ubidata' && github.event.action == 'labeled' && contains(github.event.pull_request.labels.*.name, 'version')
     runs-on: ubuntu-latest
     permissions:
       contents: write
