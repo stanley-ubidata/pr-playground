@@ -8,6 +8,17 @@ on:
 
   workflow_dispatch:
     inputs:
+      app_name:
+        required: false
+        type: choice
+        description: "App to deploy (STAG/PROD) ONLY"
+        default: "monorepo"
+        options:
+          - "ubidocs_mobile"
+          - "ubidocs_web"
+          - "ubimatic"
+          - "ubifuel"
+          - "ubitrails"
       environment:
         type: environment
         default: DEV
@@ -51,6 +62,14 @@ jobs:
             if [ "${{ github.event.inputs.environment }}" == "QA" ]; then
               if [ "${{ github.event.inputs.major_version }}" != "-" ] || [ "${{ github.event.inputs.min_version }}" != "-" ] || [ "${{ github.event.inputs.patch_version }}" != "-" ]; then
                 echo "Major, minor, and patch versions should not be provided for QA environment"
+                exit 1
+              fi
+            fi
+
+            ## if environment is STAG or PROD, app_name should be provided 
+            if [ "${{ github.event.inputs.environment }}" == "STAG" ] || [ "${{ github.event.inputs.environment }}" == "PROD" ]; then
+              if [ "${{ github.event.inputs.app_name }}" == "monorepo" ]; then
+                echo "App name is required for STAG and PROD environments"
                 exit 1
               fi
             fi
