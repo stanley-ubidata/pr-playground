@@ -2,13 +2,13 @@ name: Automerge
 on:
   pull_request:
     types:
-      - opened
+      - labeled
     paths:
       - VERSION
 
 jobs:
   check_pr:
-    if: github.actor == 'jarvis-ubidata' && github.event.action == 'labeled' && contains(github.event.pull_request.labels.*.name, 'version')
+    if: github.actor == 'jarvis-ubidata' && github.event.action == 'labeled' && contains(github.event.pull_request.labels.*.name, 'version-env')
     name: "Checks contributors"
     runs-on: ubuntu-latest
     steps:
