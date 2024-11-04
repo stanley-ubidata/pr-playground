@@ -1,0 +1,33 @@
+name: Pull Request Reader
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+
+jobs:
+  pr_reader:
+    name: 📖 Pull Request Reader
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get PR tags and print them
+        id: pr_tags
+        run: |
+          echo "PR tags: ${{ github.event.pull_request.labels }}"
+          echo "::set-output name=tags::${{ github.event.pull_request.labels }}"
+
+      - name: Get PR title and body
+        id: pr_title_body
+        run: |
+          echo "PR title: ${{ github.event.pull_request.title }}"
+          echo "PR body: ${{ github.event.pull_request.body }}"
+          echo "::set-output name=title::${{ github.event.pull_request.title }}"
+          echo "::set-output name=body::${{ github.event.pull_request.body }}"
+
+      - name: Check if PR title contains "WIP"
+        id: check_wip
+        run: |
+          if [[ ${{ steps.pr_title_body.outputs.title }} == *"WIP"* ]]; then
+              echo "PR is a work in progress"
+              exit 1
+          else
+              echo "PR is not a work in progress"
+          fi
