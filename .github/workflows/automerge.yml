@@ -10,19 +10,6 @@ on:
       - completed
 
 jobs:
-  print_actor:
-    name: Print actor
-    runs-on: ubuntu-latest
-    steps:
-      - name: Print actor
-        run: |
-          echo ${{ github.actor }}
-          echo ${{ github.event.pull_request.head.ref }}
-          echo ${{ github.event.pull_request.labels.*.name }}
-          echo ${{ github.event.action}}
-          echo ${{ contains(github.event.pull_request.labels.*.name, 'version') }}
-        shell: bash
-
   check_pr:
     if: github.actor == 'jarvis-ubidata' && contains(github.event.pull_request.labels.*.name, 'version')
     name: "Checks contributors"
