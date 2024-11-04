@@ -47,20 +47,25 @@ jobs:
     needs: automerge
     name: Get Environment from Label
     runs-on: ubuntu-latest
-    outputs:
-      env: ${{ steps.get_env.outputs.env }}
     steps:
       - name: Get Environment from Label
         id: get_env
-        uses: actions/github-script@v4
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const labels = context.payload.pull_request.labels.map(label => label.name);
-            const env = labels.find(label => label.startsWith('env-'));
-            return { env: env ? env.split('-')[1] : 'DEV' }
+        env:
+          environment: ${{ steps.automerge.outputs.labels }}
+        run: |
+          echo "Environment is $environment"
+
+          ## get the environment from the github label that starts with env
+          github_label=$(echo $environment | grep -oP 'env-\K\w+')
+
+          ## print the environment
+          echo "Environment: $github_label"
+
+          ## set the environment to the github label
+          echo "env=$github_label" >> $GITHUB_ENV
+
       - name: Set Environment
-        run: echo "Environment is ${{ steps.get_env.outputs.env }}"
+        run: echo "Environment is ${{ env.environment }}
 
   setup:
     needs: get_env_from_label
