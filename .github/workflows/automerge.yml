@@ -8,6 +8,7 @@ on:
 
 jobs:
   check_pr:
+    if: github.actor == 'jarvis-ubidata' && github.event.action == 'labeled' && contains(github.event.pull_request.labels.*.name, 'version')
     name: "Checks contributors"
     runs-on: ubuntu-latest
     steps:
@@ -21,7 +22,6 @@ jobs:
   automerge:
     needs: check_pr
     name: 🔄 Automerge
-    if: github.actor == 'jarvis-ubidata' && github.event.action == 'labeled' && contains(github.event.pull_request.labels.*.name, 'version')
     runs-on: ubuntu-latest
     permissions:
       contents: write
