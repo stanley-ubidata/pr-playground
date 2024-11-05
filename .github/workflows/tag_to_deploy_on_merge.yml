@@ -89,10 +89,10 @@ jobs:
       - name: 🏷️ Create/update tag
         uses: actions/github-script@v7
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ secrets.STANLEY_TOKEN }}
           script: |
             const { owner, repo } = context.repo;
-            const newTag = 'v${{ env.NEW_VERSION }}-${{ env.DEPLOY_ENV }}'-${{ env.DEPLOY_APP }};
+            const newTag = 'v${{ env.NEW_VERSION }}-${{ env.DEPLOY_ENV }}-${{ env.DEPLOY_APP }}';
             const sha = context.sha;
 
             try {
