@@ -2,7 +2,9 @@ name: Tag on PR Merge
 
 on:
   pull_request:
-    types: [closed, ready_for_review, converted_to_draft]
+    types: [closed]
+    branches:
+      - "main"
 
 jobs:
   Tag:
@@ -92,7 +94,7 @@ jobs:
             console.log(`Version with env: ${versionWithEnv}`);
 
             // if deploy_app is not "monorepo", include the app name in the tag
-            const versionWithApp = process.env.DEPLOY_APP !== "monorepo" ? `${version}-${process.env.DEPLOY_APP}` : version;
+            const versionWithApp = `${version}-${process.env.DEPLOY_APP}`;
             // print the version with app
             console.log(`Version with app: ${versionWithApp}`);
 
