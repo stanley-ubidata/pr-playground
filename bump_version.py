@@ -57,6 +57,6 @@ if __name__ == "__main__":
     else:
         print("Too many arguments provided.")
 
-# Run the script
-# python bump_version.py 1.0.0+1
+# Run the script, ex:
+# python bump_version.py 1.0.0+1 DEV 1 2 3
 
