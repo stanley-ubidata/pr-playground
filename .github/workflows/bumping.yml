@@ -142,7 +142,7 @@ jobs:
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v6
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.STANLEY_TOKEN }}
           reviewers: ${{ github.actor }}
           body: |
             This PR updates the version file to ${{ env.NEW_VERSION }}.
