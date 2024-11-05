@@ -3,13 +3,12 @@ name: Tag and Deploy on PR Merge
 on:
   pull_request:
     types: [closed, ready_for_review, converted_to_draft]
-    branches:
-      - main
 
 jobs:
   setup:
     # if: github.event.pull_request.merged == true && contains(github.event.pull_request.labels.*.name, 'version')
     runs-on: ubuntu-latest
+    permissions: write-all
     steps:
       - name: Extract Deployment Info from PR Labels
         id: extract-info
@@ -57,12 +56,6 @@ jobs:
               core.exportVariable('DEPLOY_APP', 'none');
             }
 
-  create_tag:
-    needs: setup
-    permissions: write-all
-    name: 🏷️ Create/Update tag
-    runs-on: ubuntu-latest
-    steps:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
