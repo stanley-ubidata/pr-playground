@@ -21,24 +21,26 @@ jobs:
           # Extract version without build number (before '+' if it exists)
           VERSION=${VERSION_WITH_BUILD%+*}
 
-          # Extract build number if it exists (after '+')
           BUILD_NUMBER=""
           if [[ $VERSION_WITH_BUILD == *"+"* ]]; then
             BUILD_NUMBER=${VERSION_WITH_BUILD#*+}
           fi
 
-          # Set outputs
           echo "version=$VERSION" >> $GITHUB_OUTPUT
           echo "build_number=$BUILD_NUMBER" >> $GITHUB_OUTPUT
           echo "app=$APP" >> $GITHUB_OUTPUT
           echo "environment=$ENV" >> $GITHUB_OUTPUT
 
-          # Print for verification
           echo "Full tag: $GITHUB_REF_NAME"
           echo "Version: $VERSION"
           echo "Build Number: $BUILD_NUMBER"
           echo "App: $APP"
           echo "Environment: $ENV"
+
+          if [ -z "$VERSION" ] || [ -z "$APP" ] || [ -z "$ENV" ]; then
+            echo "Invalid tag format. Expected format: v<version>-<app>-<environment>"
+            exit 1
+          fi
 
       - name: Use parsed values
         run: |
