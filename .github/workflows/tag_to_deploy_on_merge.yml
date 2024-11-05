@@ -2,13 +2,13 @@ name: Tag and Deploy on PR Merge
 
 on:
   pull_request:
-    types: [closed]
+    types: [closed, ready_for_review]
     branches:
       - main
 
 jobs:
   setup:
-    if: github.event.pull_request.merged == true && contains(github.event.pull_request.labels.*.name, 'version')
+    # if: github.event.pull_request.merged == true && contains(github.event.pull_request.labels.*.name, 'version')
     runs-on: ubuntu-latest
     steps:
       - name: Extract Deployment Info from PR Labels
