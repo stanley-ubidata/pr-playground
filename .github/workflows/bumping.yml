@@ -150,6 +150,6 @@ jobs:
           commit-message: Update version file through script
           title: "Bump version to ${{ env.NEW_VERSION }}"
           delete-branch: true
-          labels: version, env-${{ inputs.environment || 'DEV' }}
+          labels: version, env-${{ inputs.environment || 'DEV' }}, app-${{ inputs.app_name || 'monorepo' }}
           branch: version-${{ env.NEW_VERSION}}
           base: main
