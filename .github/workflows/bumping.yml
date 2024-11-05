@@ -14,6 +14,7 @@ on:
         description: "App to deploy (STAG/PROD) ONLY"
         default: "monorepo"
         options:
+          - "monorepo"
           - "ubidocs_mobile"
           - "ubidocs_web"
           - "ubimatic"
