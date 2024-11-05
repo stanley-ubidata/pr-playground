@@ -1,4 +1,4 @@
-name: Tag Parser Workflow
+name: Deploy from Tag
 
 on:
   push:
@@ -7,6 +7,7 @@ on:
 
 jobs:
   parse-tag:
+    name: 🏷️ Parse Tag
     runs-on: ubuntu-latest
     outputs:
       version: ${{ steps.tag-parts.outputs.version }}
@@ -14,12 +15,13 @@ jobs:
       app: ${{ steps.tag-parts.outputs.app }}
       environment: ${{ steps.tag-parts.outputs.environment }}
     steps:
-      - name: Debug Tag Info
+      # name with emojis
+      - name: 🐛 Debug Tag Info
         run: |
           echo "GITHUB_REF: $GITHUB_REF"
           echo "GITHUB_REF_NAME: $GITHUB_REF_NAME"
 
-      - name: Extract tag parts
+      - name: ✂️ Extract tag parts
         id: tag-parts
         run: |
           echo "Starting tag parsing..."
@@ -63,22 +65,13 @@ jobs:
             exit 1
           fi
 
-      - name: Debug outputs in same job
-        run: |
-          echo "Checking step outputs in same job:"
-          echo "Version: ${{ steps.tag-parts.outputs.version }}"
-          echo "Build Number: ${{ steps.tag-parts.outputs.build_number }}"
-          echo "App: ${{ steps.tag-parts.outputs.app }}"
-          echo "Environment: ${{ steps.tag-parts.outputs.environment }}"
-
-  print-env:
+  verification:
+    name: 👀 Verification
     runs-on: ubuntu-latest
     needs: parse-tag
     steps:
       - name: Print environment variables
         run: |
-          echo "Checking outputs in dependent job:"
-          echo "Raw outputs object: ${{ toJSON(needs.parse-tag.outputs) }}"
           echo "Version: ${{ needs.parse-tag.outputs.version }}"
           echo "Build Number: ${{ needs.parse-tag.outputs.build_number }}"
           echo "App: ${{ needs.parse-tag.outputs.app }}"
