@@ -83,21 +83,21 @@ jobs:
           script: |
             const { owner, repo } = context.repo;
 
-            const version = "v${{ env.NEW_VERSION }}";
+            const version = `v${process.env.NEW_VERSION}`;
 
-            ## assign the environment variable to new tag
-            const versionWithEnv = `${version}-${{ env.DEPLOY_ENV }}`;
+            // assign the environment variable to new tag
+            const versionWithEnv = `${version}-${process.env.DEPLOY_ENV}`;
 
-            ## print the version with env
+            // print the version with env
             console.log(`Version with env: ${versionWithEnv}`);
 
-            ## if deploy_app is not "monorepo", include the app name in the tag
-            const versionWithApp = ${{ env.DEPLOY_APP }} !== "monorepo" ? `${version}-${{ env.DEPLOY_APP }}` : version;
-            # print the version with app
+            // if deploy_app is not "monorepo", include the app name in the tag
+            const versionWithApp = process.env.DEPLOY_APP !== "monorepo" ? `${version}-${process.env.DEPLOY_APP}` : version;
+            // print the version with app
             console.log(`Version with app: ${versionWithApp}`);
 
-            ## new tag is the combination of version with app and env
-            const newTag = `${versionWithApp}-${{ env.DEPLOY_ENV }}`;
+            // new tag is the combination of version with app and env
+            const newTag = `${versionWithApp}-${process.env.DEPLOY_ENV}`;
             const sha = context.sha;
 
             try {
