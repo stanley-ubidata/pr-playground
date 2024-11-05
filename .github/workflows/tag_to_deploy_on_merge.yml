@@ -1,11 +1,11 @@
-name: Tag and Deploy on PR Merge
+name: Tag on PR Merge
 
 on:
   pull_request:
     types: [closed, ready_for_review, converted_to_draft]
 
 jobs:
-  Deploy:
+  Tag:
     # if: github.event.pull_request.merged == true && contains(github.event.pull_request.labels.*.name, 'version')
     runs-on: ubuntu-latest
     permissions: write-all

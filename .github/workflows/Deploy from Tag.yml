@@ -1,0 +1,48 @@
+name: Tag Parser Workflow
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  parse-tag:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Extract tag parts
+        id: tag-parts
+        run: |
+          # Remove 'v' prefix from tag
+          TAG_WITHOUT_V=${GITHUB_REF_NAME#v}
+
+          # Split by '-' and store parts
+          IFS='-' read -r VERSION_WITH_BUILD APP ENV <<< "$TAG_WITHOUT_V"
+
+          # Extract version without build number (before '+' if it exists)
+          VERSION=${VERSION_WITH_BUILD%+*}
+
+          # Extract build number if it exists (after '+')
+          BUILD_NUMBER=""
+          if [[ $VERSION_WITH_BUILD == *"+"* ]]; then
+            BUILD_NUMBER=${VERSION_WITH_BUILD#*+}
+          fi
+
+          # Set outputs
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "build_number=$BUILD_NUMBER" >> $GITHUB_OUTPUT
+          echo "app=$APP" >> $GITHUB_OUTPUT
+          echo "environment=$ENV" >> $GITHUB_OUTPUT
+
+          # Print for verification
+          echo "Full tag: $GITHUB_REF_NAME"
+          echo "Version: $VERSION"
+          echo "Build Number: $BUILD_NUMBER"
+          echo "App: $APP"
+          echo "Environment: $ENV"
+
+      - name: Use parsed values
+        run: |
+          echo "Version: ${{ steps.tag-parts.outputs.version }}"
+          echo "Build Number: ${{ steps.tag-parts.outputs.build_number }}"
+          echo "App: ${{ steps.tag-parts.outputs.app }}"
+          echo "Environment: ${{ steps.tag-parts.outputs.environment }}"
