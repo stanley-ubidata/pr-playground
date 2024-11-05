@@ -1,7 +1,7 @@
 import sys
 import os
 
-def bump_version(version,  environment="DEV", super_major="-", super_minor="-", super_patch="-"):
+def bump_version(version,  environment="DEV", override_major="-", override_minor="-", override_patch="-"):
     # Split the version into version part and build number
     version_parts = version.split('+')
     version_part = version_parts[0]
@@ -14,20 +14,19 @@ def bump_version(version,  environment="DEV", super_major="-", super_minor="-", 
 
     build_number += 1    
 
-    if super_major != "-":
-        major = super_major
-        minor = super_minor != "-" and super_minor or 0
-        patch = super_patch != "-" and super_patch or 0
-    elif super_minor != "-":
-        minor = super_minor
-        patch = super_patch != "-" and super_patch or 0
+    if override_major != "-":
+        major = override_major
+        minor = override_minor != "-" and override_minor or 0
+        patch = override_patch != "-" and override_patch or 0
+    elif override_minor != "-":
+        minor = override_minor
+        patch = override_patch != "-" and override_patch or 0
     else:
-        if super_patch != "-":
-            patch = super_patch
+        if override_patch != "-":
+            patch = override_patch
         elif environment == "QA":
             patch = patch + 1
 
-    # Create the new version string
     new_version = f"{major}.{minor}.{patch}+{build_number}"
 
     # Navigate to the folder on top

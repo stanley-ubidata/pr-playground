@@ -48,3 +48,14 @@ jobs:
           echo "Build Number: ${{ steps.tag-parts.outputs.build_number }}"
           echo "App: ${{ steps.tag-parts.outputs.app }}"
           echo "Environment: ${{ steps.tag-parts.outputs.environment }}"
+
+  print-env:
+    runs-on: ubuntu-latest
+    needs: parse-tag
+    steps:
+      - name: Print environment variables
+        run: |
+          echo "Version: ${{ needs.parse-tag.outputs.version }}"
+          echo "Build Number: ${{ needs.parse-tag.outputs.build_number }}"
+          echo "App: ${{ needs.parse-tag.outputs.app }}"
+          echo "Environment: ${{ needs.parse-tag.outputs.environment }}"
