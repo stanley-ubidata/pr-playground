@@ -8,6 +8,11 @@ on:
 jobs:
   parse-tag:
     runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.tag-parts.outputs.version }}
+      build_number: ${{ steps.tag-parts.outputs.build_number }}
+      app: ${{ steps.tag-parts.outputs.app }}
+      environment: ${{ steps.tag-parts.outputs.environment }}
     steps:
       - name: Extract tag parts
         id: tag-parts
