@@ -18,7 +18,7 @@ jobs:
       - name: Check PR
         uses: JJ/github-pr-contains-action@releases/v14.1
         with:
-          github-token: ${{secrets.GITHUB_TOKEN}}
+          github-token: ${{secrets.STANLEY_TOKEN}}
           linesChanged: 1
           filesChanged: 1
 
