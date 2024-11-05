@@ -125,8 +125,3 @@ jobs:
                 throw error;
               }
             }
-      # Rest of your deployment steps...
-      - name: Deploy Application
-        run: |
-          echo "Deploying $DEPLOY_APP version $DEPLOY_VERSION to $DEPLOY_ENV"
-          # Your deployment logic here
