@@ -2,7 +2,7 @@ name: Tag and Deploy on PR Merge
 
 on:
   pull_request:
-    types: [closed, ready_for_review]
+    types: [closed, ready_for_review, converted_to_draft]
     branches:
       - main
 
@@ -83,16 +83,13 @@ jobs:
           # Set the environment variable for the next steps GITHUB
           echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
 
-          # Display the environment variable to verify it
-          echo "Environment variable input: ${{ inputs.environment }}"
-
       - name: 🏷️ Create/update tag
         uses: actions/github-script@v7
         with:
           github-token: ${{ secrets.STANLEY_TOKEN }}
           script: |
             const { owner, repo } = context.repo;
-            const newTag = 'v${{ env.NEW_VERSION }}-${{ env.DEPLOY_ENV }}-${{ env.DEPLOY_APP }}';
+            const newTag = "v${{ env.NEW_VERSION }}-${DEPLOY_ENV}-${DEPLOY_APP}";
             const sha = context.sha;
 
             try {
