@@ -17,9 +17,9 @@ on:
           - "monorepo"
           - "ubidocs_mobile"
           - "ubidocs_web"
+          - "ubidocs_trails_app"
+          - "fuel_consolidation"
           - "ubimatic"
-          - "ubifuel"
-          - "ubitrails"
       environment:
         type: environment
         default: DEV
