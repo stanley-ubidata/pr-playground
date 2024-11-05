@@ -14,14 +14,26 @@ jobs:
       app: ${{ steps.tag-parts.outputs.app }}
       environment: ${{ steps.tag-parts.outputs.environment }}
     steps:
+      - name: Debug Tag Info
+        run: |
+          echo "GITHUB_REF: $GITHUB_REF"
+          echo "GITHUB_REF_NAME: $GITHUB_REF_NAME"
+
       - name: Extract tag parts
         id: tag-parts
         run: |
+          echo "Starting tag parsing..."
+
           # Remove 'v' prefix from tag
           TAG_WITHOUT_V=${GITHUB_REF_NAME#v}
+          echo "Tag without v: $TAG_WITHOUT_V"
 
           # Split by '-' and store parts
           IFS='-' read -r VERSION_WITH_BUILD APP ENV <<< "$TAG_WITHOUT_V"
+          echo "After splitting:"
+          echo "VERSION_WITH_BUILD: $VERSION_WITH_BUILD"
+          echo "APP: $APP"
+          echo "ENV: $ENV"
 
           # Extract version without build number (before '+' if it exists)
           VERSION=${VERSION_WITH_BUILD%+*}
@@ -31,24 +43,29 @@ jobs:
             BUILD_NUMBER=${VERSION_WITH_BUILD#*+}
           fi
 
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
-          echo "build_number=$BUILD_NUMBER" >> $GITHUB_OUTPUT
-          echo "app=$APP" >> $GITHUB_OUTPUT
-          echo "environment=$ENV" >> $GITHUB_OUTPUT
+          # Use set-output syntax as well as the newer syntax
+          {
+            echo "version=${VERSION}"
+            echo "build_number=${BUILD_NUMBER}"
+            echo "app=${APP}"
+            echo "environment=${ENV}"
+          } >> "$GITHUB_OUTPUT"
 
-          echo "Full tag: $GITHUB_REF_NAME"
-          echo "Version: $VERSION"
-          echo "Build Number: $BUILD_NUMBER"
-          echo "App: $APP"
-          echo "Environment: $ENV"
+          # Debug outputs
+          echo "Set outputs:"
+          echo "version=$VERSION"
+          echo "build_number=$BUILD_NUMBER"
+          echo "app=$APP"
+          echo "environment=$ENV"
 
           if [ -z "$VERSION" ] || [ -z "$APP" ] || [ -z "$ENV" ]; then
             echo "Invalid tag format. Expected format: v<version>-<app>-<environment>"
             exit 1
           fi
 
-      - name: Use parsed values
+      - name: Debug outputs in same job
         run: |
+          echo "Checking step outputs in same job:"
           echo "Version: ${{ steps.tag-parts.outputs.version }}"
           echo "Build Number: ${{ steps.tag-parts.outputs.build_number }}"
           echo "App: ${{ steps.tag-parts.outputs.app }}"
@@ -60,6 +77,8 @@ jobs:
     steps:
       - name: Print environment variables
         run: |
+          echo "Checking outputs in dependent job:"
+          echo "Raw outputs object: ${{ toJSON(needs.parse-tag.outputs) }}"
           echo "Version: ${{ needs.parse-tag.outputs.version }}"
           echo "Build Number: ${{ needs.parse-tag.outputs.build_number }}"
           echo "App: ${{ needs.parse-tag.outputs.app }}"
