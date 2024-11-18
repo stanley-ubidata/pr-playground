@@ -1,7 +1,7 @@
 import sys
 import os
 
-def bump_version(version,  environment="DEV", override_major="-", override_minor="-", override_patch="-"):
+def bump_version(version, environment, override_major="-", override_minor="-", override_patch="-"):
     # Split the version into version part and build number
     version_parts = version.split('+')
     version_part = version_parts[0]
@@ -42,10 +42,8 @@ def bump_version(version,  environment="DEV", override_major="-", override_minor
         print(version_file.read())
 
 if __name__ == "__main__":
-    if len(sys.argv) < 1:
-        print("Please provide a version number as a command line argument.")
-    elif len(sys.argv) == 2:
-        bump_version(sys.argv[1])
+    if len(sys.argv) < 3:
+        print("Please provide a version number and environment as command line arguments.")
     elif len(sys.argv) == 3:
         bump_version(sys.argv[1], sys.argv[2])
     elif len(sys.argv) == 4:

@@ -14,6 +14,9 @@ jobs:
     if: github.actor == 'jarvis-ubidata' && contains(github.event.pull_request.labels.*.name, 'version')
     name: "Checks contributors"
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
     steps:
       - name: Check PR
         uses: JJ/github-pr-contains-action@releases/v14.1
@@ -21,15 +24,6 @@ jobs:
           github-token: ${{secrets.STANLEY_TOKEN}}
           linesChanged: 1
           filesChanged: 1
-
-  automerge:
-    needs: check_pr
-    name: 🔄 Automerge
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      pull-requests: write
-    steps:
       - id: automerge
         name: automerge
         uses: "pascalgn/automerge-action@v0.16.4"
