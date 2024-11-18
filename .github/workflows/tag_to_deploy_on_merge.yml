@@ -94,7 +94,7 @@ jobs:
             // print the version with env
             console.log(`Version with env: ${versionWithEnv}`);
 
-            // if deploy_app is not "monorepo", include the app name in the tag
+            // if deploy_app is not "all", include the app name in the tag
             const versionWithApp = `${version}-${process.env.DEPLOY_APP}`;
             // print the version with app
             console.log(`Version with app: ${versionWithApp}`);

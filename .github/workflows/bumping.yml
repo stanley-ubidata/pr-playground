@@ -12,9 +12,9 @@ on:
         required: false
         type: choice
         description: "App to deploy (STAG/PROD) ONLY"
-        default: "monorepo"
+        default: "all"
         options:
-          - "monorepo"
+          - "all"
           - "ubidocs_mobile"
           - "ubidocs_web"
           - "ubidocs_trails_app"
@@ -69,7 +69,7 @@ jobs:
 
             ## if environment is STAG or PROD, app_name should be provided 
             if [ "${{ github.event.inputs.environment }}" == "STAG" ] || [ "${{ github.event.inputs.environment }}" == "PROD" ]; then
-              if [ "${{ github.event.inputs.app_name }}" == "monorepo" ]; then
+              if [ "${{ github.event.inputs.app_name }}" == "all" ]; then
                 echo "App name is required for STAG and PROD environments"
                 exit 1
               fi
@@ -147,6 +147,6 @@ jobs:
           commit-message: Update version file through script
           title: "Bump version to ${{ env.NEW_VERSION }}"
           delete-branch: true
-          labels: version, env-${{ inputs.environment || 'DEV' }}, app-${{ inputs.app_name || 'monorepo' }}, automerge
+          labels: version, env-${{ inputs.environment || 'DEV' }}, app-${{ inputs.app_name || 'all' }}, automerge
           branch: version-${{ env.NEW_VERSION}}
           base: main
