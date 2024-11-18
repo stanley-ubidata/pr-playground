@@ -133,6 +133,7 @@ jobs:
       - name: Print new version
         run: |
           echo "New version: $NEW_VERSION"
+          echo "Version from steps: ${{ steps.update_monorepo_version.outputs.new_version }}"
         shell: bash
 
       - name: Create Pull Request
