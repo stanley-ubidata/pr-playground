@@ -119,7 +119,7 @@ jobs:
 
           # Navigate to the apps directory
 
-          # Assign file content to an environment variable
+          # Assign file content to a variable
           export NEW_VERSION=$(cat VERSION)
 
           # Display the environment variable
