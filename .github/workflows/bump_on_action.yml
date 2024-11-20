@@ -1,0 +1,19 @@
+name: Bump without PR
+
+on:
+  workflow_dispatch:
+
+jobs:
+  # checkout code
+  # git add a change to the VERSION file
+  # git commit the change
+  # git push the change
+  bump:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Bump version
+        run: |
+          #   print current git user
+          echo "Current git user: $(git config user.name)"
