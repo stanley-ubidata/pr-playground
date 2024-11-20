@@ -17,3 +17,8 @@ jobs:
         run: |
           #   print current git user
           echo "Current git user: $(git config user.name)"
+          touch new_file.txt
+          echo "Hello" > new_file.txt
+          git add new_file.txt
+          git commit -m "Add new file"	
+          git push
