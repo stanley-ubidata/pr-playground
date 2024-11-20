@@ -15,7 +15,7 @@ jobs:
         uses: actions/checkout@v4
       - name: Bump version
         run: |
-          git remote add origin https://${{secrets.STANLEY_TOKEN}}@github.com/stanley-ubidata/pr-playground.git
+          #   git remote add origin https://${{secrets.STANLEY_TOKEN}}@github.com/stanley-ubidata/pr-playground.git
 
           #   print current git user
           echo "Current git user: $(git config user.name)"
@@ -23,4 +23,4 @@ jobs:
           echo "Hello" > new_file.txt
           git add new_file.txt
           git commit -m "Add new file"	
-          git push
+          git push https://${{secrets.STANLEY_TOKEN}}@github.com/stanley-ubidata/pr-playground.git
