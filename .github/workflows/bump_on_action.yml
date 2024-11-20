@@ -11,6 +11,8 @@ jobs:
   bump:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
       - name: Bump version
         run: |
           git config --global user.email "thisismefake@ubidata.com"
