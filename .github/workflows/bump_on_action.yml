@@ -11,18 +11,16 @@ jobs:
   bump:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
       - name: Bump version
         run: |
-          git config --global user.email "stanley.morales@ubidata.com"
-          git config --global user.name "stanley-ubidata"
-          #   git remote add origin https://${{secrets.STANLEY_TOKEN}}@github.com/stanley-ubidata/pr-playground.git
+          git config --global user.email "thisismefake@ubidata.com"
+          git config --global user.name "stanley-ubidatasssssdasfasfs"
+
 
           #   print current git user
           echo "Current git user: $(git config user.name)"
           touch new_file.txt
-          echo "Hello" > new_file.txt
+          echo "Hello2" > new_file.txt
           git add new_file.txt
           git commit -m "Add new file"	
-          git push https://${{secrets.STANLEY_TOKEN}}@github.com/stanley-ubidata/pr-playground.git
+          git push
