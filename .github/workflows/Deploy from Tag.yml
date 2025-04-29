@@ -1,27 +1,62 @@
-name: Tag Parser Workflow
+name: Deploy from Tag
 
 on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version (e.g. 1.0.0)"
+        required: true
+      build_number:
+        description: "Build number (optional)"
+        required: false
+      app:
+        description: "App name (e.g. ubidocs_web, ubidocs_mobile)"
+        required: true
+      environment:
+        description: "Environment (dev, qa, staging, prod)"
+        required: true
+        type: choice
+        options:
+          - dev
+          - qa
+          - staging
+          - prod
   push:
     tags:
       - "v*"
 
 jobs:
   parse-tag:
+    name: 🏷️ Parse Tag
     runs-on: ubuntu-latest
     outputs:
-      version: ${{ steps.tag-parts.outputs.version }}
-      build_number: ${{ steps.tag-parts.outputs.build_number }}
-      app: ${{ steps.tag-parts.outputs.app }}
-      environment: ${{ steps.tag-parts.outputs.environment }}
+      version: ${{ steps.get-parameters.outputs.version }}
+      build_number: ${{ steps.get-parameters.outputs.build_number }}
+      app: ${{ steps.get-parameters.outputs.app }}
+      environment: ${{ steps.get-parameters.outputs.environment }}
     steps:
-      - name: Extract tag parts
+      - name: 🐛 Debug Tag Info
+        if: github.event_name == 'push'
+        run: |
+          echo "GITHUB_REF: $GITHUB_REF"
+          echo "GITHUB_REF_NAME: $GITHUB_REF_NAME"
+
+      - name: ✂️ Extract tag parts
+        if: github.event_name == 'push'
         id: tag-parts
         run: |
+          echo "Starting tag parsing..."
+
           # Remove 'v' prefix from tag
           TAG_WITHOUT_V=${GITHUB_REF_NAME#v}
+          echo "Tag without v: $TAG_WITHOUT_V"
 
           # Split by '-' and store parts
           IFS='-' read -r VERSION_WITH_BUILD APP ENV <<< "$TAG_WITHOUT_V"
+          echo "After splitting:"
+          echo "VERSION_WITH_BUILD: $VERSION_WITH_BUILD"
+          echo "APP: $APP"
+          echo "ENV: $ENV"
 
           # Extract version without build number (before '+' if it exists)
           VERSION=${VERSION_WITH_BUILD%+*}
@@ -31,26 +66,53 @@ jobs:
             BUILD_NUMBER=${VERSION_WITH_BUILD#*+}
           fi
 
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
-          echo "build_number=$BUILD_NUMBER" >> $GITHUB_OUTPUT
-          echo "app=$APP" >> $GITHUB_OUTPUT
-          echo "environment=${ENV,,}" >> $GITHUB_OUTPUT  # Convert to lowercase
+          # Use set-output syntax as well as the newer syntax
+          {
+            echo "version=${VERSION}"
+            echo "build_number=${BUILD_NUMBER}"
+            echo "app=${APP}"
+            echo "environment=${ENV,,}"
+          } >> "$GITHUB_OUTPUT"
 
-          echo "Full tag: $GITHUB_REF_NAME"
-          echo "Version: $VERSION"
-          echo "Build Number: $BUILD_NUMBER"
-          echo "App: $APP"
-          echo "Environment: $ENV"
+          # Debug outputs
+          echo "Set outputs:"
+          echo "version=$VERSION"
+          echo "build_number=$BUILD_NUMBER"
+          echo "app=$APP"
+          echo "environment=$ENV"
 
           if [ -z "$VERSION" ] || [ -z "$APP" ] || [ -z "$ENV" ]; then
             echo "Invalid tag format. Expected format: v<version>-<app>-<environment>"
             exit 1
           fi
 
-  prod-deploy:
+      - name: 📝 Get parameters from inputs or tag
+        id: get-parameters
+        run: |
+          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+            # Manual trigger - use provided inputs
+            echo "version=${{ github.event.inputs.version }}" >> $GITHUB_OUTPUT
+            echo "build_number=${{ github.event.inputs.build_number }}" >> $GITHUB_OUTPUT
+            echo "app=${{ github.event.inputs.app }}" >> $GITHUB_OUTPUT
+            echo "environment=${{ github.event.inputs.environment }}" >> $GITHUB_OUTPUT
+            
+            echo "Manual deployment with parameters:"
+            echo "version=${{ github.event.inputs.version }}"
+            echo "build_number=${{ github.event.inputs.build_number }}"
+            echo "app=${{ github.event.inputs.app }}"
+            echo "environment=${{ github.event.inputs.environment }}"
+          else
+            # Tag-based trigger - use parsed tag
+            echo "version=${{ steps.tag-parts.outputs.version }}" >> $GITHUB_OUTPUT
+            echo "build_number=${{ steps.tag-parts.outputs.build_number }}" >> $GITHUB_OUTPUT
+            echo "app=${{ steps.tag-parts.outputs.app }}" >> $GITHUB_OUTPUT
+            echo "environment=${{ steps.tag-parts.outputs.environment }}" >> $GITHUB_OUTPUT
+          fi
+
+  release_tag:
+    name: 👀 Verification
     runs-on: ubuntu-latest
     needs: parse-tag
-    if: ${{ needs.parse-tag.outputs.environment == 'prod' }}
     steps:
       - name: Print environment variables
         run: |
@@ -59,32 +121,17 @@ jobs:
           echo "App: ${{ needs.parse-tag.outputs.app }}"
           echo "Environment: ${{ needs.parse-tag.outputs.environment }}"
 
-  dev-deploy:
-    runs-on: ubuntu-latest
-    needs: parse-tag
-    if: ${{ needs.parse-tag.outputs.environment == 'dev' }}
-    steps:
-      - name: Print environment variables
-        run: |
-          echo "Version: ${{ needs.parse-tag.outputs.version }}"
-          echo "Build Number: ${{ needs.parse-tag.outputs.build_number }}"
-          echo "App: ${{ needs.parse-tag.outputs.app }}"
-          echo "Environment: ${{ needs.parse-tag.outputs.environment }}"
-  release:
-    if: ${{ needs.parse-tag.outputs.environment == 'prod' || needs.parse-tag.outputs.environment == 'stag'}}
-    name: Release
-    runs-on: ubuntu-latest
-    needs: parse-tag
-    steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
       - name: Create Release
+        if: ${{ needs.parse-tag.outputs.environment == 'staging'}}
         id: create_release
         uses: actions/create-release@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.STANLEY_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+          GITHUB_TOKEN: ${{ secrets.STANLEY_TOKEN }}
         with:
           tag_name: ${{ github.ref }}
-          release_name: Release v${{ needs.parse-tag.outputs.version }} | ${{ needs.parse-tag.outputs.app }} > ${{ needs.parse-tag.outputs.environment }}
+          release_name: Release v${{ needs.parse-tag.outputs.version }}
           draft: false
           prerelease: true
