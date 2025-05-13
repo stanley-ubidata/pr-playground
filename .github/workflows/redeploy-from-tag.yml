@@ -59,8 +59,9 @@ jobs:
 
             const newApp = '${{ github.event.inputs.new_app_name }}';
             const newEnv = '${{ github.event.inputs.new_environment }}';
+            const buildNumber = process.env.GITHUB_RUN_NUMBER;
 
-            const newTag = `v${version}-${newApp}-${newEnv}`;
+            const newTag = `v${version}-${newApp}-${newEnv}-build.${buildNumber}`;
             const sha = context.sha;
 
             console.log(`New tag to create: ${newTag}`);
