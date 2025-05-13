@@ -50,21 +50,18 @@ jobs:
             const { owner, repo } = context.repo;
             const currentTag = process.env.CURRENT_TAG;
 
-            // Extract version number from current tag (assuming format vX.Y.Z-app-env)
-            const versionMatch = currentTag.match(/^v(\d+\.\d+\.\d+)/);
+            // Extract version number and build number from current tag (assuming format vX.Y.Z+BUILD-app-env)
+            const versionMatch = currentTag.match(/^v(\d+\.\d+\.\d+)\+(\d+)/);
             if (!versionMatch) {
-              throw new Error(`Invalid current tag format: ${currentTag}`);
+              throw new Error(`Invalid current tag format: ${currentTag}. Expected format like vX.Y.Z+BUILD-...`);
             }
             const version = versionMatch[1];
+            const buildNumber = versionMatch[2];
 
             const newApp = '${{ github.event.inputs.new_app_name }}';
             const newEnv = '${{ github.event.inputs.new_environment }}';
-            const buildNumber = process.env.GITHUB_RUN_NUMBER;
 
-            const newTag = `v${version}-${newApp}-${newEnv}-build.${buildNumber}`;
-            const sha = context.sha;
-
-            console.log(`New tag to create: ${newTag}`);
+            const newTag = `v${version}+${buildNumber}-${newApp}-${newEnv}`;
 
             try {
               await github.rest.git.createRef({
