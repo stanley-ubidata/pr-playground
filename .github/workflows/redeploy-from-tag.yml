@@ -47,45 +47,79 @@ jobs:
         with:
           github-token: ${{ secrets.STANLEY_TOKEN }}
           script: |
-            const { owner, repo } = context.repo;
+            // Extract current tag components
             const currentTag = process.env.CURRENT_TAG;
+            console.log(`Processing current tag: ${currentTag}`);
 
-            // Extract version number and build number from current tag (assuming format vX.Y.Z+BUILD-app-env)
-            const versionMatch = currentTag.match(/^v(\d+\.\d+\.\d+)\+(\d+)/);
-            if (!versionMatch) {
-              throw new Error(`Invalid current tag format: ${currentTag}. Expected format like vX.Y.Z+BUILD-...`);
+            // Remove 'v' prefix
+            const tagWithoutV = currentTag.startsWith('v') ? currentTag.substring(1) : currentTag;
+
+            // Split by '-' to get parts
+            const parts = tagWithoutV.split('-');
+            if (parts.length !== 3) {
+              core.setFailed(`Invalid tag format: ${currentTag}. Expected format: v<version>-<app>-<environment>`);
+              return;
             }
-            const version = versionMatch[1];
-            const buildNumber = versionMatch[2];
 
+            const versionWithBuild = parts[0];
+            // Extract version and build number if present
+            let version = versionWithBuild;
+            let buildNumber = "";
+            if (versionWithBuild.includes('+')) {
+              [version, buildNumber] = versionWithBuild.split('+');
+            }
+
+            // Create new tag with requested app and environment
             const newApp = '${{ github.event.inputs.new_app_name }}';
             const newEnv = '${{ github.event.inputs.new_environment }}';
 
-            const newTag = `v${version}+${buildNumber}-${newApp}-${newEnv}`;
-
-            try {
-              await github.rest.git.createRef({
-                owner,
-                repo,
-                ref: `refs/tags/${newTag}`,
-                sha
-              });
-              console.log(`Successfully created tag ${newTag}`);
-            } catch (error) {
-              if (error.status === 422) {
-                console.log(`Tag ${newTag} already exists. Updating it.`);
-                await github.rest.git.updateRef({
-                  owner,
-                  repo,
-                  ref: `tags/${newTag}`,
-                  sha,
-                  force: true
-                });
-                console.log(`Successfully updated tag ${newTag}`);
-              } else {
-                throw error;
-              }
+            // Format new tag
+            let newTag;
+            if (buildNumber) {
+              newTag = `v${version}+${buildNumber}-${newApp}-${newEnv}`;
+            } else {
+              newTag = `v${version}-${newApp}-${newEnv}`;
             }
+
+            console.log(`Creating new tag: ${newTag}`);
+
+            // Check if tag already exists
+            try {
+              await github.rest.git.getRef({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                ref: `refs/tags/${newTag}`
+              });
+              console.log(`Tag ${newTag} already exists. Will delete and recreate.`);
+              
+              // Delete existing tag
+              await github.rest.git.deleteRef({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                ref: `refs/tags/${newTag}`
+              });
+            } catch (error) {
+              // Tag doesn't exist, which is fine
+              console.log(`Tag ${newTag} does not exist yet.`);
+            }
+
+            // Get the current commit SHA
+            const { data: refData } = await github.rest.git.getRef({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: 'heads/main'
+            });
+            const commitSha = refData.object.sha;
+
+            // Create new tag
+            await github.rest.git.createRef({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: `refs/tags/${newTag}`,
+              sha: commitSha
+            });
+
+            console.log(`Successfully created tag: ${newTag}`);
 
       - name: Display next steps
         run: |
