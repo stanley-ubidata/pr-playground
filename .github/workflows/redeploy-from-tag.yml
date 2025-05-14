@@ -8,6 +8,7 @@ on:
         type: choice
         description: "App to deploy to"
         options:
+          - "all_web"
           - "ubidocs_mobile"
           - "ubidocs_web"
           - "ubidocs_trails_app"
@@ -19,10 +20,10 @@ on:
         type: choice
         description: "Environment to deploy to"
         options:
-          - "dev"
-          - "qa"
-          - "staging"
-          - "prod"
+          - "DEV"
+          - "QA"
+          - "STAGING"
+          - "PROD"
 
 jobs:
   validate-and-create-tag:
@@ -35,20 +36,13 @@ jobs:
         with:
           fetch-depth: 0 # Need full history to check tags
 
-      - name: Get current tag
-        id: get-current-tag
-        run: |
-          CURRENT_TAG=$(git describe --tags --abbrev=0)
-          echo "CURRENT_TAG=${CURRENT_TAG}" >> $GITHUB_ENV
-          echo "Using current tag: ${CURRENT_TAG}"
-
       - name: Parse current tag and create new tag
         uses: actions/github-script@v7
         with:
           github-token: ${{ secrets.STANLEY_TOKEN }}
           script: |
             // Extract current tag components
-            const currentTag = process.env.CURRENT_TAG;
+            const currentTag = process.env.GITHUB_REF.replace('refs/tags/', '');
             console.log(`Processing current tag: ${currentTag}`);
 
             // Remove 'v' prefix
@@ -103,23 +97,27 @@ jobs:
               console.log(`Tag ${newTag} does not exist yet.`);
             }
 
-            // Get the current commit SHA
-            const { data: refData } = await github.rest.git.getRef({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              ref: 'heads/main'
-            });
-            const commitSha = refData.object.sha;
+            // Get the commit SHA from the current tag
+            try {
+              const { data: tagData } = await github.rest.git.getRef({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                ref: `refs/tags/${currentTag}`
+              });
+              const commitSha = tagData.object.sha;
 
-            // Create new tag
-            await github.rest.git.createRef({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              ref: `refs/tags/${newTag}`,
-              sha: commitSha
-            });
+              // Create new tag pointing to the same commit
+              await github.rest.git.createRef({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                ref: `refs/tags/${newTag}`,
+                sha: commitSha
+              });
 
-            console.log(`Successfully created tag: ${newTag}`);
+              console.log(`Successfully created tag: ${newTag} pointing to same commit as ${currentTag}`);
+            } catch (error) {
+              core.setFailed(`Failed to process tag: ${error.message}`);
+            }
 
       - name: Display next steps
         run: |
