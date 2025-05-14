@@ -77,26 +77,6 @@ jobs:
 
             console.log(`Creating new tag: ${newTag}`);
 
-            // Check if tag already exists
-            try {
-              await github.rest.git.getRef({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                ref: `refs/tags/${newTag}`
-              });
-              console.log(`Tag ${newTag} already exists. Will delete and recreate.`);
-              
-              // Delete existing tag
-              await github.rest.git.deleteRef({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                ref: `refs/tags/${newTag}`
-              });
-            } catch (error) {
-              // Tag doesn't exist, which is fine
-              console.log(`Tag ${newTag} does not exist yet.`);
-            }
-
             // Get the commit SHA from the current tag
             try {
               const { data: tagData } = await github.rest.git.getRef({
@@ -106,17 +86,35 @@ jobs:
               });
               const commitSha = tagData.object.sha;
 
-              // Create new tag pointing to the same commit
-              await github.rest.git.createRef({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                ref: `refs/tags/${newTag}`,
-                sha: commitSha
-              });
-
-              console.log(`Successfully created tag: ${newTag} pointing to same commit as ${currentTag}`);
+              // Create or update tag pointing to the same commit
+              try {
+                // Try to create the tag
+                await github.rest.git.createRef({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  ref: `refs/tags/${newTag}`,
+                  sha: commitSha
+                });
+                console.log(`Successfully created tag: ${newTag} pointing to same commit as ${currentTag}`);
+              } catch (error) {
+                if (error.status === 422) { 
+                  console.log(`Tag ${newTag} already exists. Updating it.`);
+                  // If the tag already exists, update it
+                  await github.rest.git.updateRef({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    ref: `tags/${newTag}`,
+                    sha: commitSha,
+                    force: true
+                  });
+                  console.log(`Successfully updated tag ${newTag}`);
+                } else {
+                  // If it's any other error, throw it
+                  throw error;
+                }
+              }
             } catch (error) {
-              core.setFailed(`Failed to process tag: ${error.message}`);
+              core.setFailed(`Failed to create or update tag: ${error.message}`);
             }
 
       - name: Display next steps
